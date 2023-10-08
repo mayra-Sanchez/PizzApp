@@ -43,9 +43,9 @@ class MainActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.primary
+                    color =Color(0xFFF9EEC9)
                 ) {
-                    inicio()
+                    LoginScreen()
                 }
             }
         }
@@ -132,6 +132,6 @@ fun inicio() {
 @Composable
 fun AppPreview() {
     PizzAppTheme {
-        inicio()
+        LoginScreen()
     }
 }
