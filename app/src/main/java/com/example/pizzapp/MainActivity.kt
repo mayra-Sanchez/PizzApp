@@ -14,23 +14,22 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.pizzapp.ui.theme.PizzAppTheme
 
 private const val TAG = "MainActivity"
@@ -40,16 +39,32 @@ class MainActivity : ComponentActivity() {
         Log.d(TAG, "onCreate Called")
         setContent {
             PizzAppTheme {
-                // A surface container using the 'background' color from the theme
+                val navController = rememberNavController()
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color =Color(0xFFF9EEC9)
                 ) {
-                    LoginScreen()
+
+                    NavHost(
+                        navController = navController,
+                        startDestination = "inicio"
+                    ) {
+                        composable("inicio") {
+                            inicio(navController = navController)
+                        }
+                        composable("registro") {
+                            RegisterScreen(navController = navController)
+                        }
+                        composable("login") {
+                            LoginScreen(navController = navController)
+                        }
+                    }
                 }
             }
         }
     }
+
+
 
     override fun onStart() {
         super.onStart()
@@ -83,7 +98,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun inicio() {
+fun inicio(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -105,7 +120,7 @@ fun inicio() {
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             Button(
-                onClick = { /* Acción al hacer clic en "Inicio" */ },
+                onClick = { navController.navigate("login") },
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
                 modifier = Modifier
                     .weight(1f)
@@ -115,7 +130,7 @@ fun inicio() {
             }
             Spacer(modifier = Modifier.size(16.dp))
             Button(
-                onClick = { /* Acción al hacer clic en "Registro" */ },
+                onClick = { navController.navigate("registro")},
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
                 modifier = Modifier
                     .weight(1f)
@@ -132,6 +147,6 @@ fun inicio() {
 @Composable
 fun AppPreview() {
     PizzAppTheme {
-        LoginScreen()
+
     }
 }

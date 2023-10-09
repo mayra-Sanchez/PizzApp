@@ -1,13 +1,11 @@
 package com.example.pizzapp
 
 import android.content.Context
-import android.graphics.drawable.Icon
-import android.media.Image
 import android.util.Patterns
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,12 +14,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -38,27 +33,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.Role.Companion.Button
-import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.w3c.dom.Text
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.TextField
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.navigation.NavController
+import androidx.navigation.compose.composable
 
-@Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun LoginScreen() {
+fun LoginScreen(navController: NavController) {
     val context = LocalContext.current
 
     var email by remember { mutableStateOf("") }
@@ -82,7 +67,6 @@ fun LoginScreen() {
                     .padding(12.dp)
                     .background(Color(249, 238, 201))
                     .clip(RoundedCornerShape(10.dp)),
-
             ) {
                 Column(
                     Modifier
@@ -114,7 +98,7 @@ fun LoginScreen() {
                         isValidEmail = isValidEmail,
                         isValidPassword = isValidPassword
                     )
-                    dontHaveAcount()
+                    dontHaveAcount(navController = navController)
                 }
             }
         }
@@ -134,7 +118,7 @@ fun ImageLogin(){
 }
 
 @Composable
-fun dontHaveAcount(){
+fun dontHaveAcount(navController: NavController){
     Row(
         Modifier
             .fillMaxWidth(),
@@ -150,7 +134,9 @@ fun dontHaveAcount(){
             text = "Registrate",
             color = Color.Blue,
             modifier = Modifier
-                .padding(5.dp)
+                .padding(5.dp).clickable {
+                    navController.navigate("registro")
+                }
         )
     }
 
@@ -230,7 +216,7 @@ fun password(
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             trailingIcon = {
-                PasswordVisibilityToggle(
+                PasswordVisibility(
                     passwordVisible = passwordVisible,
                     onPasswordVisibilityToggle = passwordVisibleChange
                 )
@@ -240,7 +226,7 @@ fun password(
 }
 
 @Composable
-fun PasswordVisibilityToggle(
+fun PasswordVisibility(
     passwordVisible: Boolean,
     onPasswordVisibilityToggle: () -> Unit
 ) {
@@ -271,9 +257,7 @@ fun buttonLogin(
             .padding(10.dp),
         horizontalArrangement = Arrangement.Center) {
         Button(
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(116, 27, 15)
-            ),
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
             modifier = Modifier.fillMaxWidth(),
             onClick = {Login(context)},
             //enabled = isValidEmail && isValidPassword
