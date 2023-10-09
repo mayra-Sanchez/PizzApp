@@ -9,11 +9,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -36,13 +34,12 @@ fun RegisterScreen() {
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.background)
                 .padding(16.dp)
-                .border(1.dp, MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(8.dp))
+                .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Registro", style = MaterialTheme.typography.headlineLarge)
-
+            Text(text = "Registro", style = MaterialTheme.typography.headlineLarge.copy(fontFamily = FontFamily.Serif),  textAlign = TextAlign.Center)
             TextField(
                 value = nombre,
                 onValueChange = { nombre = it },
@@ -56,12 +53,12 @@ fun RegisterScreen() {
             TextField(
                 value = correo,
                 onValueChange = { correo = it },
-                label = { Text("Correo Electrónico") }
+                label = { Text("Correo electrónico") }
             )
             TextField(
                 value = nombreUsuario,
                 onValueChange = { nombreUsuario = it },
-                label = { Text("Nombre de Usuario") }
+                label = { Text("Nombre de usuario") }
             )
             TextField(
                 value = contrasena,
@@ -70,18 +67,25 @@ fun RegisterScreen() {
                 visualTransformation = PasswordVisualTransformation()
             )
 
+            val customButtonColor = Color.Red.copy(alpha = 0.8f) // Crea un color personalizado con 81% de opacidad
+
             Button(
                 onClick = {
                     // Aquí puedes manejar el registro del usuario
                     // Puedes acceder a las variables nombre, apellido, correo, contrasena, nombreUsuario
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Red,
+                    containerColor = customButtonColor, // Usa el color personalizado
                     contentColor = Color.White
-                )
+                ),
+                modifier = Modifier
+                    .height(56.dp)
+                    .padding(horizontal = 8.dp),
+                shape = RoundedCornerShape(8.dp)
             ) {
                 Text(text = "Registrarse")
             }
+
         }
     }
 }
