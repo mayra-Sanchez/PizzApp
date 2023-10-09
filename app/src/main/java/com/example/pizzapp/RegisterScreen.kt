@@ -2,6 +2,7 @@ package com.example.pizzapp
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -13,10 +14,11 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegisterScreen() {
+fun RegisterScreen(navController: NavController) {
     var nombre by remember { mutableStateOf("") }
     var apellido by remember { mutableStateOf("") }
     var correo by remember { mutableStateOf("") }
@@ -85,6 +87,25 @@ fun RegisterScreen() {
             ) {
                 Text(text = "Registrarse")
             }
+
+            Text(
+                text = "¿Ya tienes una cuenta?",
+                color = Color.Black, // Cambia el color del texto según tu preferencia
+                modifier = Modifier
+                    .padding(top = 16.dp)
+
+            )
+
+            Text(
+                text = "Iniciar sesión",
+                color = Color.Blue, // Cambia el color del texto según tu preferencia
+                modifier = Modifier
+                    .padding(top = 10.dp)
+                    .clickable {
+                        // Navegar a la pantalla de inicio de sesión
+                        //navController.navigate("LoginScreen")
+                    }
+            )
 
         }
     }
