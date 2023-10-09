@@ -100,7 +100,7 @@ fun RegisterScreen(navController: NavController) {
                 text = "Iniciar sesión",
                 color = Color.Blue, // Cambia el color del texto según tu preferencia
                 modifier = Modifier
-                    .padding(top = 10.dp)
+                    .padding(top = 8.dp)
                     .clickable {
                         navController.navigate("login")
                     }
