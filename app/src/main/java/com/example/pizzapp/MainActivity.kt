@@ -1,6 +1,7 @@
 package com.example.pizzapp
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -31,11 +32,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.pizzapp.ui.theme.PizzAppTheme
 
+private const val TAG = "MainActivity"
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
+        Log.d(TAG, "onCreate Called")
         setContent {
             PizzAppTheme {
                 val navController = rememberNavController()
@@ -43,6 +44,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color =Color(0xFFF9EEC9)
                 ) {
+
 
                     NavHost(
                         navController = navController,
@@ -54,11 +56,45 @@ class MainActivity : ComponentActivity() {
                         composable("registro") {
                             RegisterScreen(navController = navController)
                         }
-                        // Agrega más composable y rutas según sea necesario
+                        composable("login") {
+                            LoginScreen(navController = navController)
+                        }
                     }
                 }
             }
         }
+    }
+
+
+
+    override fun onStart() {
+        super.onStart()
+        Log.d(TAG, "onStart Called")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d(TAG, "onResume Called")
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        Log.d(TAG, "onRestart Called")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d(TAG, "onPause Called")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d(TAG, "onStop Called")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(TAG, "onDestroy Called")
     }
 }
 
@@ -79,14 +115,13 @@ fun inicio(navController: NavController) {
                 .padding(bottom = 10.dp)
         )
 
-
         // Botones de inicio y registro
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             Button(
-                onClick = { /* Acción al hacer clic en "Inicio" */ },
+                onClick = { navController.navigate("login") },
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
                 modifier = Modifier
                     .weight(1f)

@@ -102,8 +102,7 @@ fun RegisterScreen(navController: NavController) {
                 modifier = Modifier
                     .padding(top = 10.dp)
                     .clickable {
-                        // Navegar a la pantalla de inicio de sesión
-                        //navController.navigate("LoginScreen")
+                        navController.navigate("login")
                     }
             )
 
