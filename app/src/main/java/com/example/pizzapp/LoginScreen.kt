@@ -64,15 +64,14 @@ fun LoginScreen(navController: NavController) {
                 .fillMaxWidth()) {
             Box(
                 modifier = Modifier
-                    .padding(12.dp)
-                    .background(Color(249, 238, 201))
-                    .clip(RoundedCornerShape(10.dp)),
+                    .padding(12.dp).clip(RoundedCornerShape(10.dp))
+                    .background(Color(249, 238, 201)),
             ) {
                 Column(
                     Modifier
                         .padding(16.dp)
                         .align(Alignment.Center)) {
-                    ImageLogin()
+                    ImageLogin(navController)
                     Email(
                         email = email,
                         emailChange = {
@@ -106,11 +105,11 @@ fun LoginScreen(navController: NavController) {
 }
 
 @Composable
-fun ImageLogin(){
+fun ImageLogin(navController: NavController){
     Row(
         horizontalArrangement = Arrangement.Center) {
         Image(
-            modifier = Modifier.size(400.dp),
+            modifier = Modifier.size(400.dp).clickable {  navController.navigate("inicio") },
             painter = painterResource(id = R.drawable.logologin),
             contentDescription = null,
         )
