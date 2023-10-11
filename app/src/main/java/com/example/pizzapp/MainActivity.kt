@@ -31,6 +31,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.pizzapp.ui.theme.PizzAppTheme
+import com.google.firebase.firestore.FirebaseFirestore
+
 
 private const val TAG = "MainActivity"
 class MainActivity : ComponentActivity() {
@@ -63,7 +65,7 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
+    var db = FirebaseFirestore.getInstance()
 
 
     override fun onStart() {

@@ -89,7 +89,13 @@ fun RegisterScreen(navController: NavController) {
                     buttonRegister(
                         context = context,
                         isValidEmail = isValidEmail,
-                        isValidPassword = isValidPassword
+                        isValidPassword = isValidPassword,
+                        email = email,
+                        password = password,
+                        nombre = nombre,
+                        apellido = apellido,
+                        nombreUsuario = nombreUsuario,
+                        navController = navController
                     )
                     youHaveAcount(navController = navController)
                 }
@@ -221,23 +227,47 @@ fun youHaveAcount(navController: NavController){
 fun buttonRegister(
     context: Context,
     isValidEmail: Boolean,
-    isValidPassword: Boolean
+    isValidPassword: Boolean,
+    email: String,
+    password: String,
+    nombre: String,
+    apellido: String,
+    nombreUsuario: String,
+    navController: NavController
+
 ) {
+    val firestoreRepository = FirestoreRepository()
+
     Row(
         Modifier
             .fillMaxWidth()
             .padding(10.dp),
-        horizontalArrangement = Arrangement.Center) {
+        horizontalArrangement = Arrangement.Center
+    ) {
         Button(
             colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
             modifier = Modifier.fillMaxWidth(),
-            onClick = {Register(context)},
-            //enabled = isValidEmail && isValidPassword
+            onClick = {
+                if (isValidEmail && isValidPassword) {
+                    val user = User(nombre, apellido, email, nombreUsuario, password)
+                    firestoreRepository.createUser(user,
+                        onSuccess = {
+                            Toast.makeText(context, "Usuario registrado con éxito", Toast.LENGTH_LONG).show()
+                            navController.navigate("login")
+                        },
+                        onFailure = { e ->
+                            Toast.makeText(context, "Error al registrar: ${e.message}", Toast.LENGTH_LONG).show()
+                        })
+                } else {
+                    Toast.makeText(context, "Revisa los campos", Toast.LENGTH_LONG).show()
+                }
+            }
         ) {
             Text(text = "Registrarse")
         }
     }
 }
+
 fun Register(context: Context){
     Toast.makeText(context, "Aca se hace la funcionalidad", Toast.LENGTH_LONG).show()
 }
