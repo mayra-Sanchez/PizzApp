@@ -4,55 +4,41 @@ import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.auth.FirebaseAuth
 
 class FirestoreRepository {
 
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
     fun createUser(user: User, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-        db.collection("users")
-            .add(user)
-            .addOnSuccessListener { documentReference ->
-                Log.d("TAG", "DocumentSnapshot added with ID: ${documentReference.id}")
-                onSuccess()
-            }
-            .addOnFailureListener { e ->
-                Log.w("TAG", "Error adding document", e)
-                onFailure(e)
-            }
-    }
-
-    fun getUserByEmail(correo: String, onSuccess: (User) -> Unit, onFailure: (Exception) -> Unit) {
-        db.collection("users")
-            .whereEqualTo("correo", correo)
-            .get()
-            .addOnSuccessListener { documents ->
-                if (documents.size() > 0) {
-                    val user = documents.documents[0].toObject(User::class.java)!!
-                    onSuccess(user)
+        auth.createUserWithEmailAndPassword(user.correo!!, user.password!!)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    // Usuario creado en Auth, ahora guardamos en Firestore
+                    val uid = auth.currentUser?.uid ?: return@addOnCompleteListener
+                    db.collection("users")
+                        .document(uid)
+                        .set(user)
+                        .addOnSuccessListener { onSuccess() }
+                        .addOnFailureListener { e -> onFailure(e) }
                 } else {
-                    onFailure(Exception("No user found"))
+                    onFailure(task.exception ?: Exception("Unknown error"))
                 }
             }
-            .addOnFailureListener { e ->
-                onFailure(e)
-            }
     }
 
-    fun loginUser(email: String, password: String, onSuccess: () -> Unit, onFailure: (String) -> Unit) {
-        val firestoreRepository = FirestoreRepository()
 
-        firestoreRepository.getUserByEmail(email, { user ->
-            if (user.password == password) { // NUEVAMENTE, almacenar contraseñas en texto plano no es seguro.
-                onSuccess()
-            } else {
-                onFailure("Contraseña incorrecta")
+    fun loginUser(email: String, password: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    onSuccess()
+                } else {
+                    onFailure(task.exception ?: Exception("Error desconocido durante el inicio de sesión"))
+                }
             }
-        }, {
-            onFailure("Usuario no encontrado")
-        })
     }
-
 
     fun updateUser(userId: String, updatedData: Map<String, Any>, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
         db.collection("users")

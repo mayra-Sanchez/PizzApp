@@ -269,7 +269,7 @@ fun buttonLogin(
                 if (isValidEmail && isValidPassword) {
                     Login(context, email, password) {
 
-                        navController.navigate("registro")
+                        navController.navigate("pagina_principal")
                     }
                 } else {
                     Toast.makeText(context, "Verifica los campos", Toast.LENGTH_SHORT).show()
@@ -289,7 +289,9 @@ fun Login(context: Context, email: String, password: String, onSuccess: () -> Un
             Toast.makeText(context, "Inicio de sesión exitoso", Toast.LENGTH_LONG).show()
             onSuccess()
         },
-        onFailure = { errorMessage ->
-            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+        onFailure = { exception ->
+            // Asegurándonos de que estamos utilizando una cadena para el toast
+            Toast.makeText(context, exception.message ?: "Error desconocido", Toast.LENGTH_LONG).show()
         })
 }
+

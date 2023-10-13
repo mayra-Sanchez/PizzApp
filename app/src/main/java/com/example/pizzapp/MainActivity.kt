@@ -136,7 +136,7 @@ fun inicio(navController: NavController) {
             }
             Spacer(modifier = Modifier.size(16.dp))
             Button(
-                onClick = { navController.navigate("registro")},
+                onClick = { navController.navigate("registro") },
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
                 modifier = Modifier
                     .weight(1f)
@@ -146,14 +146,7 @@ fun inicio(navController: NavController) {
             }
         }
     }
-    Text(
-        text = "pagina inicial",
-        color = Color.Blue,
-        modifier = Modifier
-            .padding(5.dp).clickable {
-                navController.navigate("pagina_principal")
-            }
-    )
+
 }
 
 
