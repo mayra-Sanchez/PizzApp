@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -59,6 +60,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("login") {
                             LoginScreen(navController = navController)
+                        }
+                        composable("pagina_principal") {
+                            InitialScreen(navController = navController)
                         }
                     }
                 }
@@ -142,6 +146,14 @@ fun inicio(navController: NavController) {
             }
         }
     }
+    Text(
+        text = "pagina inicial",
+        color = Color.Blue,
+        modifier = Modifier
+            .padding(5.dp).clickable {
+                navController.navigate("pagina_principal")
+            }
+    )
 }
 
 

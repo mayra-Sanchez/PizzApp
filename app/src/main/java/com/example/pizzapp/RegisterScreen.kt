@@ -19,6 +19,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.ui.tooling.preview.Preview
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -104,7 +106,6 @@ fun RegisterScreen(navController: NavController) {
     }
 }
 
-
 @Composable
 fun ImageRegister(navController: NavController){
     Box(
@@ -114,7 +115,7 @@ fun ImageRegister(navController: NavController){
         contentAlignment = Alignment.Center
     ) {
         Image(
-            modifier = Modifier.size(130.dp), // Ajusta este valor para cambiar el tamaño del logo
+            modifier = Modifier.size(140.dp), // Ajusta este valor para cambiar el tamaño del logo
             painter = painterResource(id = R.drawable.logoregistro),
             contentDescription = null,
         )
