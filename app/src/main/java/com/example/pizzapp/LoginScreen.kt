@@ -95,7 +95,10 @@ fun LoginScreen(navController: NavController) {
                     buttonLogin(
                         context = context,
                         isValidEmail = isValidEmail,
-                        isValidPassword = isValidPassword
+                        isValidPassword = isValidPassword,
+                        email = email,
+                        password = password,
+                        navController = navController
                     )
                     dontHaveAcount(navController = navController)
                 }
@@ -248,23 +251,45 @@ fun PasswordVisibility(
 fun buttonLogin(
     context: Context,
     isValidEmail: Boolean,
-    isValidPassword: Boolean
+    isValidPassword: Boolean,
+    email: String, // Si utilizas el email para el inicio de sesión
+    password: String,
+    navController: NavController
 ) {
     Row(
         Modifier
             .fillMaxWidth()
             .padding(10.dp),
-        horizontalArrangement = Arrangement.Center) {
+        horizontalArrangement = Arrangement.Center
+    ) {
         Button(
             colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
             modifier = Modifier.fillMaxWidth(),
-            onClick = {Login(context)},
-            //enabled = isValidEmail && isValidPassword
+            onClick = {
+                if (isValidEmail && isValidPassword) {
+                    Login(context, email, password) {
+
+                        navController.navigate("registro")
+                    }
+                } else {
+                    Toast.makeText(context, "Verifica los campos", Toast.LENGTH_SHORT).show()
+                }
+            }
         ) {
             Text(text = "Iniciar sesión")
         }
     }
 }
-fun Login(context: Context){
-    Toast.makeText(context, "Aca se hace la funcionalidad", Toast.LENGTH_LONG).show()
+
+fun Login(context: Context, email: String, password: String, onSuccess: () -> Unit) {
+    val firestoreRepository = FirestoreRepository()
+
+    firestoreRepository.loginUser(email, password,
+        onSuccess = {
+            Toast.makeText(context, "Inicio de sesión exitoso", Toast.LENGTH_LONG).show()
+            onSuccess()
+        },
+        onFailure = { errorMessage ->
+            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+        })
 }

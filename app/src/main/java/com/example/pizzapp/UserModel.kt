@@ -1,9 +1,9 @@
 package com.example.pizzapp
 
 data class User(
-    val nombre: String,
-    val apellido: String,
-    val correo: String,
-    val nombreUsuario: String,
-    val password: String  // Nota: en una aplicación real, nunca almacenes contraseñas sin cifrar.
+    var nombre: String? = null,
+    var apellido: String? = null,
+    var correo: String? = null,
+    var nombreUsuario: String? = null,
+    var password: String? = null
 )

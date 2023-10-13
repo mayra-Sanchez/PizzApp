@@ -1,6 +1,8 @@
 package com.example.pizzapp
 
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import com.google.firebase.firestore.FirebaseFirestore
 
 class FirestoreRepository {
@@ -20,9 +22,9 @@ class FirestoreRepository {
             }
     }
 
-    fun getUserByNombreUsuario(nombreUsuario: String, onSuccess: (User) -> Unit, onFailure: (Exception) -> Unit) {
+    fun getUserByEmail(correo: String, onSuccess: (User) -> Unit, onFailure: (Exception) -> Unit) {
         db.collection("users")
-            .whereEqualTo("nombreUsuario", nombreUsuario)
+            .whereEqualTo("correo", correo)
             .get()
             .addOnSuccessListener { documents ->
                 if (documents.size() > 0) {
@@ -37,10 +39,10 @@ class FirestoreRepository {
             }
     }
 
-    fun loginUser(nombreUsuario: String, password: String, onSuccess: () -> Unit, onFailure: (String) -> Unit) {
+    fun loginUser(email: String, password: String, onSuccess: () -> Unit, onFailure: (String) -> Unit) {
         val firestoreRepository = FirestoreRepository()
 
-        firestoreRepository.getUserByNombreUsuario(nombreUsuario, { user ->
+        firestoreRepository.getUserByEmail(email, { user ->
             if (user.password == password) { // NUEVAMENTE, almacenar contraseñas en texto plano no es seguro.
                 onSuccess()
             } else {
