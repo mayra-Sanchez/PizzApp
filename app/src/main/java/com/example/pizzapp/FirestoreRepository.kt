@@ -5,6 +5,8 @@ import android.util.Log
 import android.widget.Toast
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.DocumentReference
 
 class FirestoreRepository {
 
@@ -40,7 +42,12 @@ class FirestoreRepository {
             }
     }
 
-    fun updateUser(userId: String, updatedData: Map<String, Any>, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+    fun updateUser(
+        userId: String,
+        updatedData: Map<String, Any>,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
         db.collection("users")
             .document(userId)
             .update(updatedData)
@@ -51,6 +58,8 @@ class FirestoreRepository {
                 onFailure(e)
             }
     }
+
+
 
     // DELETE - Eliminar un usuario por su ID
     fun deleteUser(userId: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
@@ -64,5 +73,15 @@ class FirestoreRepository {
                 onFailure(e)
             }
     }
+
+    fun getCurrentUser(): FirebaseUser? {
+        return auth.currentUser
+    }
+
+    fun getUserDocument(userId: String): DocumentReference {
+        return db.collection("users").document(userId)
+    }
+
+
 
 }

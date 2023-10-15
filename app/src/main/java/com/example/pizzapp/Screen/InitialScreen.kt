@@ -1,4 +1,4 @@
-package com.example.pizzapp
+package com.example.pizzapp.Screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -14,6 +14,6 @@ fun InitialScreen(navController: NavController) {
     Box(modifier = Modifier
         .fillMaxSize()
         .background(Color(236, 83, 76))) {
-        Navbar(navController, "aqui va el usuario")
+        Navbar(navController)
     }
 }

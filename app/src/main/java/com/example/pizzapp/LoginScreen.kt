@@ -40,7 +40,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.navigation.NavController
-import androidx.navigation.compose.composable
 
 @Composable
 fun LoginScreen(navController: NavController) {
@@ -80,7 +79,7 @@ fun LoginScreen(navController: NavController) {
                         },
                         isValidEmail
                     )
-                    password(
+                    Password(
                         password = password,
                         passwordChange = {
                             password = it
@@ -92,7 +91,7 @@ fun LoginScreen(navController: NavController) {
                         isValidPassword = isValidPassword
 
                     )
-                    buttonLogin(
+                    Button_login(
                         context = context,
                         isValidEmail = isValidEmail,
                         isValidPassword = isValidPassword,
@@ -100,7 +99,7 @@ fun LoginScreen(navController: NavController) {
                         password = password,
                         navController = navController
                     )
-                    dontHaveAcount(navController = navController)
+                    DontHaveAccount(navController = navController)
                 }
             }
         }
@@ -120,7 +119,7 @@ fun ImageLogin(navController: NavController){
 }
 
 @Composable
-fun dontHaveAcount(navController: NavController){
+fun DontHaveAccount(navController: NavController){
     Row(
         Modifier
             .fillMaxWidth(),
@@ -181,7 +180,7 @@ fun Email(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun password(
+fun Password(
     password: String,
     passwordChange: (String)->Unit,
     passwordVisible: Boolean,
@@ -248,11 +247,11 @@ fun PasswordVisibility(
     }
 }
 @Composable
-fun buttonLogin(
+fun Button_login(
     context: Context,
     isValidEmail: Boolean,
     isValidPassword: Boolean,
-    email: String, // Si utilizas el email para el inicio de sesión
+    email: String,
     password: String,
     navController: NavController
 ) {
@@ -267,7 +266,7 @@ fun buttonLogin(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
                 if (isValidEmail && isValidPassword) {
-                    Login(context, email, password) {
+                    login(context, email, password) {
 
                         navController.navigate("pagina_principal")
                     }
@@ -281,7 +280,7 @@ fun buttonLogin(
     }
 }
 
-fun Login(context: Context, email: String, password: String, onSuccess: () -> Unit) {
+fun login(context: Context, email: String, password: String, onSuccess: () -> Unit) {
     val firestoreRepository = FirestoreRepository()
 
     firestoreRepository.loginUser(email, password,
