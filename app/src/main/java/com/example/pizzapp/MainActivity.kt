@@ -38,7 +38,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 
 private const val TAG = "MainActivity"
-class MainActivity : ComponentActivity() {
+class MainActivity(private var navController: NavController? = null) : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate Called")
@@ -77,6 +77,14 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+    fun setNavController(controller: NavController) {
+        navController = controller
+    }
+
+    fun navigateToRegistro() {
+        navController?.navigate("registro")
+    }
+
     var db = FirebaseFirestore.getInstance()
 
 
@@ -110,6 +118,8 @@ class MainActivity : ComponentActivity() {
         Log.d(TAG, "onDestroy Called")
     }
 }
+
+
 
 @Composable
 fun Inicio(navController: NavController) {
