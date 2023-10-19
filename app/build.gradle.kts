@@ -74,7 +74,7 @@ dependencies {
     androidTestImplementation("androidx.navigation:navigation-testing:2.5.3")
 
     implementation("androidx.emoji2:emoji2:1.4.0")
-
+    testImplementation("io.mockk:mockk:1.12.0")
     testImplementation("org.mockito:mockito-core:3.12.4")
     androidTestImplementation("org.mockito:mockito-android:3.12.4")
     testImplementation("junit:junit:4.13.2")
