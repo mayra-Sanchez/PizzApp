@@ -38,18 +38,26 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 
 private const val TAG = "MainActivity"
-class MainActivity(private var navController: NavController? = null) : ComponentActivity() {
+
+class MainActivity : ComponentActivity() {
+
+    private var navController: NavController? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate Called")
+
         setContent {
+            val navController = rememberNavController()
+
+            // Asignar el NavController al MainActivity
+            this@MainActivity.navController = navController
+
             PizzAppTheme {
-                val navController = rememberNavController()
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color =Color(0xFFF9EEC9)
+                    color = Color(0xFFF9EEC9)
                 ) {
-
                     NavHost(
                         navController = navController,
                         startDestination = "inicio"
@@ -76,13 +84,6 @@ class MainActivity(private var navController: NavController? = null) : Component
                 }
             }
         }
-    }
-    fun setNavController(controller: NavController) {
-        navController = controller
-    }
-
-    fun navigateToRegistro() {
-        navController?.navigate("registro")
     }
 
     var db = FirebaseFirestore.getInstance()
