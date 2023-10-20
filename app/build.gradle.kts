@@ -82,5 +82,7 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation(kotlin("script-runtime"))
     implementation("com.google.firebase:firebase-auth:latest_version")
+    testImplementation ("org.mockito:mockito-core:3.12.4")
+    testImplementation ("org.mockito:mockito-inline:3.12.4")
 
 }
