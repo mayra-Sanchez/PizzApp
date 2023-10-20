@@ -2,6 +2,8 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
+    id("jacoco")
+
 }
 
 android {
@@ -86,3 +88,4 @@ dependencies {
     testImplementation ("org.mockito:mockito-inline:3.12.4")
 
 }
+

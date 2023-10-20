@@ -3,42 +3,31 @@ package com.example.pizzapp
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.AuthResult
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.auth.FirebaseAuth
 
-class FirestoreRepository {
+class FirestoreRepository(private val db: FirebaseFirestore = FirebaseFirestore.getInstance(),
+                          private val auth: FirebaseAuth = FirebaseAuth.getInstance()) {
+    // Resto de tu código
 
-    private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
-    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
-    fun createUser(user: User, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-        auth.createUserWithEmailAndPassword(user.correo!!, user.password!!)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    // Usuario creado en Auth, ahora guardamos en Firestore
-                    val uid = auth.currentUser?.uid ?: return@addOnCompleteListener
-                    db.collection("users")
-                        .document(uid)
-                        .set(user)
-                        .addOnSuccessListener { onSuccess() }
-                        .addOnFailureListener { e -> onFailure(e) }
-                } else {
-                    onFailure(task.exception ?: Exception("Unknown error"))
-                }
-            }
+    fun createUserWithAuth(user: User): Task<AuthResult> {
+        return auth.createUserWithEmailAndPassword(user.correo!!, user.password!!)
+    }
+
+    fun saveUserToFirestore(user: User): Task<Void> {
+        val uid = auth.currentUser?.uid ?: throw Exception("No UID found after creation")
+        return db.collection("users").document(uid).set(user)
     }
 
 
-    fun loginUser(email: String, password: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-        auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    onSuccess()
-                } else {
-                    onFailure(task.exception ?: Exception("Error desconocido durante el inicio de sesión"))
-                }
-            }
+    fun loginUser(email: String, password: String): Task<AuthResult> {
+        return auth.signInWithEmailAndPassword(email, password)
     }
+
+
 
     fun updateUser(userId: String, updatedData: Map<String, Any>, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
         db.collection("users")

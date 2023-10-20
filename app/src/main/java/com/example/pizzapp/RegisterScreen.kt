@@ -223,7 +223,6 @@ fun youHaveAcount(navController: NavController){
     }
 
 }
-
 @Composable
 fun buttonRegister(
     context: Context,
@@ -235,7 +234,6 @@ fun buttonRegister(
     apellido: String,
     nombreUsuario: String,
     navController: NavController
-
 ) {
     val firestoreRepository = FirestoreRepository()
 
@@ -246,19 +244,24 @@ fun buttonRegister(
         horizontalArrangement = Arrangement.Center
     ) {
         Button(
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
-            modifier = Modifier.fillMaxWidth(),
+            //... (misma configuración del botón)
             onClick = {
                 if (isValidEmail && isValidPassword) {
                     val user = User(nombre, apellido, email, nombreUsuario, password)
-                    firestoreRepository.createUser(user,
-                        onSuccess = {
-                            Toast.makeText(context, "Usuario registrado con éxito", Toast.LENGTH_LONG).show()
-                            navController.navigate("login")
-                        },
-                        onFailure = { e ->
-                            Toast.makeText(context, "Error al registrar: ${e.message}", Toast.LENGTH_LONG).show()
-                        })
+                    firestoreRepository.createUserWithAuth(user)
+                        .addOnSuccessListener {
+                            firestoreRepository.saveUserToFirestore(user)
+                                .addOnSuccessListener {
+                                    Toast.makeText(context, "Usuario registrado con éxito", Toast.LENGTH_LONG).show()
+                                    navController.navigate("login")
+                                }
+                                .addOnFailureListener { e ->
+                                    Toast.makeText(context, "Error al guardar en Firestore: ${e.message}", Toast.LENGTH_LONG).show()
+                                }
+                        }
+                        .addOnFailureListener { e ->
+                            Toast.makeText(context, "Error en la autenticación: ${e.message}", Toast.LENGTH_LONG).show()
+                        }
                 } else {
                     Toast.makeText(context, "Revisa los campos", Toast.LENGTH_LONG).show()
                 }
@@ -268,7 +271,6 @@ fun buttonRegister(
         }
     }
 }
-
 fun Register(context: Context){
     Toast.makeText(context, "Aca se hace la funcionalidad", Toast.LENGTH_LONG).show()
 }

@@ -284,14 +284,17 @@ fun buttonLogin(
 fun Login(context: Context, email: String, password: String, onSuccess: () -> Unit) {
     val firestoreRepository = FirestoreRepository()
 
-    firestoreRepository.loginUser(email, password,
-        onSuccess = {
-            Toast.makeText(context, "Inicio de sesión exitoso", Toast.LENGTH_LONG).show()
-            onSuccess()
-        },
-        onFailure = { exception ->
-            // Asegurándonos de que estamos utilizando una cadena para el toast
-            Toast.makeText(context, exception.message ?: "Error desconocido", Toast.LENGTH_LONG).show()
-        })
+    firestoreRepository.loginUser(email, password)
+        .addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Toast.makeText(context, "Inicio de sesión exitoso", Toast.LENGTH_LONG).show()
+                onSuccess()
+            } else {
+                val exception = task.exception ?: Exception("Error desconocido durante el inicio de sesión")
+                Toast.makeText(context, exception.message ?: "Error desconocido", Toast.LENGTH_LONG).show()
+            }
+        }
 }
+
+
 
