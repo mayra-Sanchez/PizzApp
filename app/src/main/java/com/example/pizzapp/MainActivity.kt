@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,29 +30,40 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.pizzapp.Screen.InitialScreen
+import com.example.pizzapp.Screen.MyProfileScreen
+import com.example.pizzapp.Screen.MyReviewScreen
 import com.example.pizzapp.ui.theme.PizzAppTheme
 import com.google.firebase.firestore.FirebaseFirestore
 
 
 private const val TAG = "MainActivity"
+
 class MainActivity : ComponentActivity() {
+
+    private var navController: NavController? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate Called")
+
         setContent {
+            val navController = rememberNavController()
+
+            // Asignar el NavController al MainActivity
+            this@MainActivity.navController = navController
+
             PizzAppTheme {
-                val navController = rememberNavController()
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color =Color(0xFFF9EEC9)
+                    color = Color(0xFFF9EEC9)
                 ) {
-
                     NavHost(
                         navController = navController,
                         startDestination = "inicio"
                     ) {
                         composable("inicio") {
-                            inicio(navController = navController)
+                            Inicio(navController = navController)
                         }
                         composable("registro") {
                             RegisterScreen(navController = navController)
@@ -64,11 +74,18 @@ class MainActivity : ComponentActivity() {
                         composable("pagina_principal") {
                             InitialScreen(navController = navController)
                         }
+                        composable("mi_perfil") {
+                            MyProfileScreen(navController = navController)
+                        }
+                        composable("mis_reseñas") {
+                            MyReviewScreen(navController = navController)
+                        }
                     }
                 }
             }
         }
     }
+
     var db = FirebaseFirestore.getInstance()
 
 
@@ -103,8 +120,10 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
+
 @Composable
-fun inicio(navController: NavController) {
+fun Inicio(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -120,7 +139,6 @@ fun inicio(navController: NavController) {
                 .padding(bottom = 10.dp)
         )
 
-        // Botones de inicio y registro
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly

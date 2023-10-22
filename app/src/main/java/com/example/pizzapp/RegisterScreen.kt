@@ -18,11 +18,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.input.KeyboardType
 
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(navController: NavController) {
     val context = LocalContext.current
@@ -77,7 +76,7 @@ fun RegisterScreen(navController: NavController) {
                         nombreUsuarioChange ={
                             nombreUsuario = it}
                     )
-                    password(
+                    Password(
                         password = password,
                         passwordChange = {
                             password = it
@@ -88,7 +87,7 @@ fun RegisterScreen(navController: NavController) {
                         passwordVisibleChange = { passwordVisible = !passwordVisible },
                         isValidPassword = isValidPassword
                     )
-                    buttonRegister(
+                    ButtonRegister(
                         context = context,
                         isValidEmail = isValidEmail,
                         isValidPassword = isValidPassword,
@@ -99,7 +98,7 @@ fun RegisterScreen(navController: NavController) {
                         nombreUsuario = nombreUsuario,
                         navController = navController
                     )
-                    youHaveAcount(navController = navController)
+                    YouHaveAccount(navController = navController)
                 }
             }
         }
@@ -115,7 +114,7 @@ fun ImageRegister(navController: NavController){
         contentAlignment = Alignment.Center
     ) {
         Image(
-            modifier = Modifier.size(140.dp), // Ajusta este valor para cambiar el tamaño del logo
+            modifier = Modifier.size(140.dp),
             painter = painterResource(id = R.drawable.logoregistro),
             contentDescription = null,
         )
@@ -125,8 +124,8 @@ fun ImageRegister(navController: NavController){
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Nombre(
-    nombre:String,
-    nombreChange: (String)->Unit
+    nombre: String,
+    nombreChange: (String) -> Unit
 ) {
     Row(
         Modifier
@@ -137,20 +136,20 @@ fun Nombre(
         OutlinedTextField(
             shape = RoundedCornerShape(10.dp),
             value = nombre,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             onValueChange = nombreChange,
             label = { Text("Nombre") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
             singleLine = true,
+            maxLines = 1,
         )
     }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Apellido(
-    apellido:String,
-    apellidoChange: (String)->Unit
+    apellido: String,
+    apellidoChange: (String) -> Unit
 ) {
     Row(
         Modifier
@@ -161,22 +160,21 @@ fun Apellido(
         OutlinedTextField(
             shape = RoundedCornerShape(10.dp),
             value = apellido,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             onValueChange = apellidoChange,
-            label = { Text("apellido") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
+            label = { Text("Apellido") },
             singleLine = true,
+            maxLines = 1,
         )
     }
 }
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NombreUsuario(
-    nombreUsuario:String,
-    nombreUsuarioChange: (String)->Unit,
-    //isValidNombreUsuario: Boolean
+    nombreUsuario: String,
+    nombreUsuarioChange: (String) -> Unit
 ) {
     Row(
         Modifier
@@ -187,19 +185,17 @@ fun NombreUsuario(
         OutlinedTextField(
             shape = RoundedCornerShape(10.dp),
             value = nombreUsuario,
-            onValueChange = nombreUsuarioChange,
-            label = {Text("Nombre de usuario")},
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            singleLine = true,
 
+            onValueChange = nombreUsuarioChange,
+            label = { Text("Nombre de usuario") },
+            singleLine = true,
+            maxLines = 1,
         )
     }
 }
 
 @Composable
-fun youHaveAcount(navController: NavController){
+fun YouHaveAccount(navController: NavController){
     Row(
         Modifier
             .fillMaxWidth(),
@@ -224,7 +220,7 @@ fun youHaveAcount(navController: NavController){
 
 }
 @Composable
-fun buttonRegister(
+fun ButtonRegister(
     context: Context,
     isValidEmail: Boolean,
     isValidPassword: Boolean,
@@ -274,3 +270,4 @@ fun buttonRegister(
 fun Register(context: Context){
     Toast.makeText(context, "Aca se hace la funcionalidad", Toast.LENGTH_LONG).show()
 }
+
