@@ -14,6 +14,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,6 +31,7 @@ import androidx.navigation.NavController
 import com.example.pizzapp.FirestoreRepository
 import com.example.pizzapp.User
 import com.example.pizzapp.navbar.Navbar
+import com.google.firebase.auth.FirebaseUser
 
 @Composable
 fun MyProfileScreen(navController: NavController) {
@@ -118,7 +120,7 @@ fun ActualizarTexto(
     value: String,
     onValueChange: (String) -> Unit
 ) {
-    OutlinedTextField(
+    TextField(
         value = value,
         onValueChange = onValueChange,
         label = { Text(label) },
