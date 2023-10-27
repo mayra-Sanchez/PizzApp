@@ -1,4 +1,4 @@
-package com.example.pizzapp.Screen
+package com.example.pizzapp.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
