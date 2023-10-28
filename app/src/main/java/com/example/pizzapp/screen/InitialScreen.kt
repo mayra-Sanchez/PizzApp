@@ -26,14 +26,14 @@ fun Initial(navController: NavController) {
             onClick = { navController.navigate("mis_reseñas_lugares")}) {
             Text(text = "Reseñas de lugares")
         }
-        */
+
 
         Button(
             colors = ButtonDefaults.buttonColors(containerColor = Color.Blue),
             modifier = Modifier.fillMaxWidth(),
             onClick = { navController.navigate("crear_reseñas_lugar")}) {
             Text(text = "Crear reseñas de lugares")
-        }
+        }*/
     /*
         Button(
             colors = ButtonDefaults.buttonColors(containerColor = Color.Blue),
