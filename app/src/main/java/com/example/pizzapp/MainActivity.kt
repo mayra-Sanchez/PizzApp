@@ -30,15 +30,19 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.pizzapp.screen.InitialScreen
-import com.example.pizzapp.screen.MyProfileScreen
-import com.example.pizzapp.screen.MyReviewScreen
+import com.example.pizzapp.screen.AddReviewFood
+import com.example.pizzapp.screen.AddReviewPlace
+import com.example.pizzapp.screen.Initial
+import com.example.pizzapp.screen.MyProfile
+import com.example.pizzapp.screen.MyReview
+import com.example.pizzapp.screen.MyReviewPlaceScreen
 import com.example.pizzapp.ui.theme.PizzAppTheme
 import com.google.firebase.firestore.FirebaseFirestore
 
 
 private const val TAG = "MainActivity"
 class MainActivity : ComponentActivity() {
+    val pizzeria = Pizzerias(name = "Pizzería Delicioso", address = "Calle Principal 123")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate Called")
@@ -64,13 +68,22 @@ class MainActivity : ComponentActivity() {
                             LoginScreen(navController = navController)
                         }
                         composable("pagina_principal") {
-                            InitialScreen(navController = navController)
+                            Initial(navController = navController)
                         }
                         composable("mi_perfil") {
-                            MyProfileScreen(navController = navController)
+                            MyProfile(navController = navController)
                         }
                         composable("mis_reseñas") {
-                            MyReviewScreen(navController = navController)
+                            MyReview(navController = navController)
+                        }
+                        composable("mis_reseñas_lugares") {
+                            MyReviewPlaceScreen(navController = navController, pizzeria = pizzeria)
+                        }
+                        composable("crear_reseñas_lugar") {
+                            AddReviewPlace(navController = navController, pizzeria = pizzeria)
+                        }
+                        composable("crear_reseñas_pizza") {
+                            AddReviewFood(navController = navController, pizzeria = pizzeria)
                         }
                     }
                 }

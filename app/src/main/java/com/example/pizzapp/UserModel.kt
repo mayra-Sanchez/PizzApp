@@ -7,3 +7,8 @@ data class User(
     var nombreUsuario: String? = null,
     var password: String? = null
 )
+
+data class Pizzerias(
+    val name: String,
+    val address: String
+)
