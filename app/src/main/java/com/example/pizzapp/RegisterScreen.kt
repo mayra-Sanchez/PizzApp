@@ -21,6 +21,9 @@ import androidx.navigation.NavController
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.KeyboardType
+import retrofit2.Call
+import retrofit2.Response
+import javax.security.auth.callback.Callback
 
 @Composable
 fun RegisterScreen(navController: NavController) {
@@ -231,7 +234,6 @@ fun ButtonRegister(
     nombreUsuario: String,
     navController: NavController
 ) {
-    val firestoreRepository = FirestoreRepository()
 
     Row(
         Modifier
@@ -243,21 +245,23 @@ fun ButtonRegister(
             //... (misma configuración del botón)
             onClick = {
                 if (isValidEmail && isValidPassword) {
-                    val user = User(nombre, apellido, email, nombreUsuario, password)
-                    firestoreRepository.createUserWithAuth(user)
-                        .addOnSuccessListener {
-                            firestoreRepository.saveUserToFirestore(user)
-                                .addOnSuccessListener {
-                                    Toast.makeText(context, "Usuario registrado con éxito", Toast.LENGTH_LONG).show()
-                                    navController.navigate("login")
-                                }
-                                .addOnFailureListener { e ->
-                                    Toast.makeText(context, "Error al guardar en Firestore: ${e.message}", Toast.LENGTH_LONG).show()
-                                }
+                    val nuevoUsuario = User(nombre, email, nombreUsuario, password, apellido)
+                    RetrofitClient.apiService.crearUsuario(nuevoUsuario).enqueue(object: retrofit2.Callback<TokenResponse> {
+                        override fun onResponse(call: Call<TokenResponse>, response: Response<TokenResponse>) {
+                            if (response.isSuccessful) {
+                                val token = response.body()?.token
+                                // Haz algo con el token, por ejemplo, guardarlo y navegar a otra pantalla
+                                Toast.makeText(context, "Usuario registrado con éxito", Toast.LENGTH_LONG).show()
+                                navController.navigate("login")
+                            } else {
+                                Toast.makeText(context, "Error en el registro: ${response.message()}", Toast.LENGTH_LONG).show()
+                            }
                         }
-                        .addOnFailureListener { e ->
-                            Toast.makeText(context, "Error en la autenticación: ${e.message}", Toast.LENGTH_LONG).show()
+
+                        override fun onFailure(call: Call<TokenResponse>, t: Throwable) {
+                            Toast.makeText(context, "Error en la comunicación: ${t.message}", Toast.LENGTH_LONG).show()
                         }
+                    })
                 } else {
                     Toast.makeText(context, "Revisa los campos", Toast.LENGTH_LONG).show()
                 }

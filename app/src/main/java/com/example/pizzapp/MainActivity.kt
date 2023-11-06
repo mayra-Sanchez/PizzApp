@@ -1,5 +1,6 @@
 package com.example.pizzapp
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -27,9 +28,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.pizzapp.Screen.InitialScreen
 import com.example.pizzapp.Screen.MyProfileScreen
 import com.example.pizzapp.Screen.MyReviewScreen
@@ -53,6 +56,8 @@ class MainActivity : ComponentActivity() {
             // Asignar el NavController al MainActivity
             this@MainActivity.navController = navController
 
+            val tokenJWT = getTokenJWT()
+
             PizzAppTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -74,8 +79,13 @@ class MainActivity : ComponentActivity() {
                         composable("pagina_principal") {
                             InitialScreen(navController = navController)
                         }
-                        composable("mi_perfil") {
-                            MyProfileScreen(navController = navController)
+                        composable( route = "mi_perfil/{jwtToken}",
+                            arguments = listOf(navArgument("jwtToken") { type = NavType.StringType })
+                        ) { backStackEntry ->
+                            MyProfileScreen(
+                                navController = navController,
+                                jwtToken = backStackEntry.arguments?.getString("jwtToken") ?: ""
+                            )
                         }
                         composable("mis_reseñas") {
                             MyReviewScreen(navController = navController)
@@ -88,7 +98,10 @@ class MainActivity : ComponentActivity() {
 
     var db = FirebaseFirestore.getInstance()
 
-
+    private fun getTokenJWT(): String {
+        val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return ""
+        return sharedPref.getString("JWT_TOKEN", "") ?: ""
+    }
     override fun onStart() {
         super.onStart()
         Log.d(TAG, "onStart Called")

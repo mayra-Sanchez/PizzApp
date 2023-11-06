@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Create
@@ -22,7 +21,6 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MenuItemColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -35,98 +33,77 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.pizzapp.FirestoreRepository
 
 import com.example.pizzapp.R
-import com.example.pizzapp.User
+import com.example.pizzapp.decodeJWT
 
 
 @Composable
-fun Navbar(navController: NavController) {
-    val firestoreRepository = FirestoreRepository()
+fun Navbar(navController: NavController, jwtToken: String? = null) {
+    // Decodificar la información del usuario desde el token JWT
+    jwtToken?.let {
+        val userData = decodeJWT(jwtToken)
+        var nombreUsuario by remember { mutableStateOf(userData?.get("nombreUsuario") as? String ?: "") }
 
-    // Obtener el usuario actual
-    val user = firestoreRepository.getCurrentUser()
+        var expanded by remember { mutableStateOf(false) }
 
-    // Variable para almacenar el nombre de usuario
-    var nombreUsuario by remember { mutableStateOf("") }
-
-    // Si hay un usuario autenticado
-    user?.let {
-        // Obtener el UID del usuario actual
-        val userId = it.uid
-
-        // Obtener el documento de usuario desde Firestore
-        val userDocument = firestoreRepository.getUserDocument(userId)
-
-        // Obtener los datos del documento
-        userDocument.get().addOnSuccessListener { documentSnapshot ->
-            if (documentSnapshot.exists()) {
-                val user = documentSnapshot.toObject(User::class.java)
-                // Asignar los datos del usuario a la variable
-                nombreUsuario = user?.nombreUsuario ?: ""
-            } else {
-                // El documento no existe
-            }
-        }.addOnFailureListener { e ->
-            // Ocurrió un error al obtener el documento
-        }
-    }
-
-    var expanded by remember { mutableStateOf(false) }
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(80.dp)
-            .background(Color(249, 238, 201))
-    ) {
-        Row(
+        Box(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .fillMaxWidth()
+                .height(80.dp)
+                .background(Color(249, 238, 201))
         ) {
-            Box(
+            Row(
                 modifier = Modifier
-                    .weight(1f)
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                // Assuming ImageInitial is a custom composable
-                ImageInitial(navController)
-            }
-            Spacer(modifier = Modifier.weight(1.5f))
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-            ) {
-                Text(text = nombreUsuario, color = Color.Black) // Cambiar el color del texto a negro
-            }
-            Box(
-                modifier = Modifier
-                    .weight(0.5f)
-            ) {
-                IconButton(
-                    onClick = {
-                        expanded = !expanded
-                    }
-                ) {
-                    Icon(Icons.Default.Settings, contentDescription = "Configuración", tint = Color.Black) // Cambiar el color del ícono a negro
-                }
-                DropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false },
+                Box(
                     modifier = Modifier
-                        .padding(3.dp)
-                        .background(Color(249, 238, 201))
+                        .weight(1f)
                 ) {
-                    DropdownMenuItem(text = { Text(text = "Mi perfil") }, leadingIcon = {Icon(Icons.Default.AccountCircle, contentDescription = "Mi perfil", tint = Color.Black)} , onClick = { navController.navigate("mi_perfil") } )
-                    DropdownMenuItem(text = { Text(text = "Mis reseñas")}, leadingIcon = {Icon(Icons.Default.Create, contentDescription = "Mis reseñas", tint = Color.Black)} , onClick = { navController.navigate("mis_reseñas") })
-                    DropdownMenuItem(text = { Text(text = "Cerrar sesión")}, leadingIcon = {Icon(Icons.Default.Close, contentDescription = "Cerrar sesión", tint = Color.Black)}, onClick = { navController.navigate("inicio") })
+                    ImageInitial(navController)
+                }
+                Spacer(modifier = Modifier.weight(1.5f))
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                ) {
+                    Text(text = nombreUsuario, color = Color.Black) // Nombre de usuario
+                }
+                Box(
+                    modifier = Modifier
+                        .weight(0.5f)
+                ) {
+                    IconButton(
+                        onClick = {
+                            expanded = !expanded
+                        }
+                    ) {
+                        Icon(Icons.Default.Settings, contentDescription = "Configuración", tint = Color.Black)
+                    }
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false },
+                        modifier = Modifier
+                            .padding(3.dp)
+                            .background(Color(249, 238, 201))
+                    ) {
+                        DropdownMenuItem(text = { Text(text = "Mi perfil") }, leadingIcon = {Icon(Icons.Default.AccountCircle, contentDescription = "Mi perfil", tint = Color.Black)} , onClick = { navController.navigate("mi_perfil") } )
+                        DropdownMenuItem(text = { Text(text = "Mis reseñas")}, leadingIcon = {Icon(Icons.Default.Create, contentDescription = "Mis reseñas", tint = Color.Black)} , onClick = { navController.navigate("mis_reseñas") })
+                        DropdownMenuItem(text = { Text(text = "Cerrar sesión")}, leadingIcon = {Icon(Icons.Default.Close, contentDescription = "Cerrar sesión", tint = Color.Black)}, onClick = { navController.navigate("inicio") })
+                    }
                 }
             }
         }
     }
-}
+
+    // Variables para almacenar los datos del usuario
+
+    }
+
+
 
 
 @Composable

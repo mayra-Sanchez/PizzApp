@@ -11,6 +11,7 @@ import com.example.pizzapp.navbar.Navbar
 
 @Composable
 fun InitialScreen(navController: NavController) {
+
     Box(modifier = Modifier
         .fillMaxSize()
         .background(Color(236, 83, 76))) {

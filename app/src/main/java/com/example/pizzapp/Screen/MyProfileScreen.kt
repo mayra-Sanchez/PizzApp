@@ -27,52 +27,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.pizzapp.FirestoreRepository
 import com.example.pizzapp.User
+import com.example.pizzapp.decodeJWT
 import com.example.pizzapp.navbar.Navbar
+import com.google.gson.Gson
+
 
 @Composable
-fun MyProfileScreen(navController: NavController) {
+fun MyProfileScreen(navController: NavController,jwtToken: String) { // Asume que el token JWT es pasado como argumento
     val context = LocalContext.current
-    val firestoreRepository = FirestoreRepository()
-
-    // Obtener el usuario actual
-    val user = firestoreRepository.getCurrentUser()
+    val userData = decodeJWT(jwtToken) // Decodifica la información del usuario desde el token JWT
 
     // Variables para almacenar los datos del usuario
-    var email by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf(userData?.get("email") as? String ?: "") }
     var isValidEmail by remember { mutableStateOf(false) }
-    var password by remember { mutableStateOf("") }
+    var nombreUsuario by remember { mutableStateOf(userData?.get("nombreUsuario") as? String ?: "") }
     var isValidPassword by remember { mutableStateOf(false) }
-    var nombre by remember { mutableStateOf("") }
-    var apellido by remember { mutableStateOf("") }
-    var nombreUsuario by remember { mutableStateOf("") }
-
-    // Si hay un usuario autenticado
-    user?.let {
-        // Obtener el UID del usuario actual
-        val userId = it.uid
-
-        // Obtener el documento de usuario desde Firestore
-        val userDocument = firestoreRepository.getUserDocument(userId)
-
-        // Obtener los datos del documento
-        userDocument.get().addOnSuccessListener { documentSnapshot ->
-            if (documentSnapshot.exists()) {
-                val user = documentSnapshot.toObject(User::class.java)
-                // Asignar los datos del usuario a las variables
-                nombre = user?.nombre ?: ""
-                apellido = user?.apellido ?: ""
-                nombreUsuario = user?.nombreUsuario ?: ""
-                email = user?.correo ?: ""
-                password = user?.password ?: ""
-            } else {
-                // El documento no existe
-            }
-        }.addOnFailureListener { e ->
-            // Ocurrió un error al obtener el documento
-        }
-    }
+    var nombre by remember { mutableStateOf(userData?.get("nombre") as? String ?: "") }
+    var apellido by remember { mutableStateOf(userData?.get("apellido") as? String ?: "") }
 
     Box(
         modifier = Modifier
@@ -93,18 +65,16 @@ fun MyProfileScreen(navController: NavController) {
             ActualizarTexto("Apellido", apellido, onValueChange = { apellido = it })
             ActualizarTexto("Nombre de Usuario", nombreUsuario, onValueChange = { nombreUsuario = it })
             ActualizarTexto("Email", email, onValueChange = { email = it })
-            ActualizarTexto("Contraseña", password, onValueChange = { password = it })
+
 
             ButtonUpdate(context = context,
                 isValidEmail = isValidEmail,
                 isValidPassword = isValidPassword,
                 email = email,
-                password = password,
                 nombre = nombre,
                 apellido = apellido,
                 nombreUsuario = nombreUsuario,
-                navController = navController,
-                userId = user?.uid // Pasa el UID del usuario actual
+                navController = navController
             )
 
         }
@@ -134,14 +104,12 @@ fun ButtonUpdate(
     isValidEmail: Boolean,
     isValidPassword: Boolean,
     email: String,
-    password: String,
     nombre: String,
     apellido: String,
     nombreUsuario: String,
     navController: NavController,
-    userId: String? // Agrega este parámetro
+
 ){
-    val firestoreRepository = FirestoreRepository()
 
     Row(
         Modifier
@@ -156,19 +124,9 @@ fun ButtonUpdate(
                         "nombre" to nombre,
                         "apellido" to apellido,
                         "correo" to email,
-                        "nombreUsuario" to nombreUsuario,
-                        "password" to password
+                        "nombreUsuario" to nombreUsuario
+
                     )
-                    firestoreRepository.updateUser(userId ?: "", updatedData,
-                        onSuccess = {
-                            Toast.makeText(context, "Datos actualizados con éxito", Toast.LENGTH_LONG).show()
-                            navController.navigate("mi_perfil")
-                        },
-                        onFailure = { e ->
-                            Toast.makeText(context, "Error al actualizar: ${e.message}", Toast.LENGTH_LONG).show()
-                        })
-                } else {
-                    Toast.makeText(context, "Revisa los campos", Toast.LENGTH_LONG).show()
                 }
             }
         ) {

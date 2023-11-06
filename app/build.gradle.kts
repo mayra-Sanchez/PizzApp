@@ -95,6 +95,10 @@ dependencies {
     implementation("com.google.firebase:firebase-auth:latest_version")
     testImplementation ("org.mockito:mockito-core:3.12.4")
     testImplementation ("org.mockito:mockito-inline:3.12.4")
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    implementation ("com.google.code.gson:gson:2.8.8")
 
 }
 
