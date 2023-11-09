@@ -34,15 +34,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.pizzapp.R
 import com.example.pizzapp.navbar.Navbar
 
 @Composable
 fun InfoRestaurant(navController: NavController){
-
    Box(modifier = Modifier
        .fillMaxSize()
        .background(Color(236, 83, 76))){
@@ -51,8 +52,7 @@ fun InfoRestaurant(navController: NavController){
        Column (
            Modifier
                .fillMaxWidth()
-               .background(Color.Transparent)){
-
+               .weight(1f)){
            Text(text = "Karen´s pizza",
                style = TextStyle(fontWeight = FontWeight.Bold), fontSize = 20.sp,
                color = Color(116,27,15),
@@ -60,7 +60,8 @@ fun InfoRestaurant(navController: NavController){
                    .padding(10.dp)
                    .align(Alignment.CenterHorizontally))
            info()
-           Spacer(modifier = Modifier.height(16.dp))
+           Spacer(modifier = Modifier.weight(1f))
+
        }
         buttonReview(navController = navController)
     }
@@ -69,51 +70,57 @@ fun InfoRestaurant(navController: NavController){
 
 @Composable
 fun info(){
-        Row(modifier = Modifier
-            .padding(20.dp)
-            .background(Color.Transparent),
-            verticalAlignment = Alignment.CenterVertically
+        Column(modifier = Modifier
+            .padding(20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
              ){
-            Column(modifier = Modifier.background(Color.Transparent)){
-                Card (modifier = Modifier
+            Row(){
+                Card(modifier = Modifier
+                    .padding(15.dp)
                     .clip(RoundedCornerShape(15.dp))
-                    .shadow(20.dp, shape = RoundedCornerShape(8.dp))
                     .background(Color(255, 255, 255))
-                    .padding(20.dp)){
-                    Text(text = "Horario:", color = Color.Black)
-                    Text(text = "__________", color = Color.Black)
-                    Text(text = "Dirección:", color = Color.Black)
-                    Text(text = "__________", color = Color.Black)
-                    Text(text = "Numero telefonico:", color = Color.Black)
-                    Text(text = "__________", color = Color.Black)
-                    Text(text = "Página web:", color = Color.Black)
-                    Text(text = "__________", color = Color.Black)
+                    .shadow(20.dp, shape = RoundedCornerShape(8.dp))
+                    ){
+                    Column (modifier = Modifier
+                        .padding(15.dp)
+                        .background(Color(255, 255, 255))){
+                        Text(text = "Horario:", color = Color.Black)
+                        Text(text = "__________", color = Color.Black)
+                        Text(text = "Dirección:", color = Color.Black)
+                        Text(text = "__________", color = Color.Black)
+                        Text(text = "Numero telefonico:", color = Color.Black)
+                        Text(text = "__________", color = Color.Black)
+                        Text(text = "Página web:", color = Color.Black)
+                        Text(text = "__________", color = Color.Black)
+                    }
                 }
-                Spacer(modifier = Modifier.height(16.dp))
+
                 Card (modifier = Modifier
+                    .padding(15.dp)
                     .clip(RoundedCornerShape(15.dp))
                     .shadow(20.dp, shape = RoundedCornerShape(8.dp))
                     .background(Color(255, 255, 255))
-                    .padding(20.dp)){
-                    Text(text = "Tipos de pizza",
-                        style = TextStyle(fontWeight = FontWeight.Bold), fontSize = 20.sp,
-                        color = Color.Black,
-                        modifier = Modifier
-                            .padding(5.dp)
-                            .align(Alignment.CenterHorizontally))
-                    Text(text = "Pollo con champiñones", color = Color.Black)
-                    Text(text = "Piña", color = Color.Black)
-                    Text(text = "Peperoni", color = Color.Black)
+                    ){
+                    Column(modifier = Modifier
+                        .padding(20.dp)
+                        .background(Color(255, 255, 255))){
+                        Text(text = "Tipos de pizza",
+                            style = TextStyle(fontWeight = FontWeight.Bold), fontSize = 20.sp,
+                            color = Color.Black,
+                            modifier = Modifier
+                                .padding(5.dp)
+                                .align(Alignment.CenterHorizontally))
+                        Text(text = "* Pollo con champiñones", color = Color.Black)
+                        Text(text = "* Piña", color = Color.Black)
+                        Text(text = "* Peperoni", color = Color.Black)
+                    }
+
                 }
             }
-            Column(modifier = Modifier
+            Card(modifier = Modifier.padding(20.dp)
                 .clip(RoundedCornerShape(15.dp))
-                .padding(20.dp)
-                .shadow(20.dp, shape = RoundedCornerShape(8.dp))
-                .background(Color.White)
-                .weight(1f)
-                .fillMaxWidth(),
-                ){
+                .shadow(20.dp, shape = RoundedCornerShape(8.dp)).background(Color(255,255,255))){
+                Column {
                     Text(text = "Reseñas",
                         style = TextStyle(fontWeight = FontWeight.Bold), fontSize = 20.sp,
                         color = Color(116,27,15),
@@ -121,78 +128,80 @@ fun info(){
                             .padding(10.dp)
                             .align(Alignment.CenterHorizontally))
 
-
+                    LazyColumn(){
+                        items(10){
+                                index -> reviews()
+                        }
+                    }
+                }
             }
-
         }
-
 }
 
 @Composable
 fun reviews(){
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(20.dp)
-            .shadow(20.dp, shape = RoundedCornerShape(8.dp))
-            .background(Color(255, 255, 255))
-    ) {
-        Column(modifier = Modifier.background(Color.Transparent)){
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp)
-                .background(Color.Transparent)) {
-                Row (modifier = Modifier.background(Color(136,104,57))){
-                    Column {
-                        Text(
-                            text = "Nombre de usuario",
-                            style = TextStyle(
-                                fontSize = 16.sp, lineHeight = 24.sp
-                            ),
-                            modifier = Modifier
-                                .weight(2f)
-                                .padding(10.dp)
+    Column(){
+        Box(modifier = Modifier
+            .padding(10.dp)) {
+            Row (modifier = Modifier
+                .clip(RoundedCornerShape(15.dp))
+                .background(Color(211, 183, 134))){
+                Column(modifier = Modifier.padding(10.dp)){
+                    Text(
+                        text = "Lali1226",
+                        style = TextStyle(fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp, lineHeight = 24.sp
                         )
-                        Text(
-                            text = "Estrellas",
-                            style = TextStyle(
-                                fontSize = 16.sp, lineHeight = 24.sp
-                            ),
-                            modifier = Modifier
-                                .weight(2f)
-                                .padding(10.dp)
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "5 estrellas",
+                        style = TextStyle(fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp, lineHeight = 24.sp
                         )
-                    }
-                    Image(
-                        painter = painterResource(id = R.drawable.logok_12a17e4a),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxWidth(),
-                        contentScale = ContentScale.Fit)
+                    )
                 }
+                Text(
+                    text = "“Me gusta mucho la comida y tienen un excelente servicio”",
+                    style = TextStyle(
+                        fontSize = 16.sp, lineHeight = 24.sp
+                    )
+                )
+
             }
-
-
         }
 
     }
+
 }
 @Composable
 fun buttonReview(navController: NavController){
-    Spacer(modifier = Modifier.height(16.dp))
-    Row(
-        Modifier
+    Column(
+        modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp),
-        horizontalArrangement = Arrangement.Center){
-        Button(onClick = {navController.navigate("reviews") },
-        colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+        verticalArrangement = Arrangement.Bottom, // Coloca el contenido en la parte inferior de la Column.
+        horizontalAlignment = Alignment.CenterHorizontally // Alinea el contenido horizontalmente en el centro.
+    ) {
+        Button(
+            onClick = { navController.navigate("reviews") },
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
         ) {
-        Text(text = "Agregar reseña",
-            style = TextStyle(fontWeight = FontWeight.Bold), fontSize = 20.sp,
-            color = Color(255,255,255))
+            Text(
+                text = "Agregar reseña",
+                style = TextStyle(fontWeight = FontWeight.Bold),
+                fontSize = 20.sp,
+                color = Color(255, 255, 255)
+            )
+        }
+    }
+}
 
-    } }
+@Preview(showBackground = true)
+@Composable
+fun InfoRestaurantPreview() {
+    val navController = rememberNavController()
+
+    InfoRestaurant(navController)
 }
 
