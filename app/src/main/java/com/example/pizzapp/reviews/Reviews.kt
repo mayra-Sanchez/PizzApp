@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -48,12 +49,13 @@ fun Reviews(navController: NavController){
                 modifier = Modifier
                     .padding(10.dp)
                     .align(Alignment.CenterHorizontally))
-            Box(modifier = Modifier.fillMaxWidth()
-                .fillMaxHeight()){
+            Box(modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center){
                 Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxWidth()
                 ){
+                    Spacer(modifier = Modifier.height(100.dp))
                     Text(text = "Elige un tipo de reseña:",
                         style = TextStyle(fontWeight = FontWeight.Bold), fontSize = 20.sp,
                         color = Color(116,27,15),
@@ -62,7 +64,7 @@ fun Reviews(navController: NavController){
                             .align(Alignment.Start))
                     Button(onClick = { /*TODO*/ },
                         modifier = Modifier
-                            .padding(10.dp),
+                            .padding(10.dp).fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Red)) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -70,27 +72,30 @@ fun Reviews(navController: NavController){
                             Image(
                                 painter = painterResource(id = R.drawable.pizzapp__9_),
                                 contentDescription = null,
-                                modifier = Modifier.size(35.dp))
+                                modifier = Modifier.size(60.dp),
+                                contentScale = ContentScale.Fit )
                             Spacer(modifier = Modifier.width(10.dp))
                             Text(text = "Reseña del restaurante")
                         }
                     }
                         Button(onClick = { /*TODO*/ },
                             modifier = Modifier
-                            .padding(10.dp),
+                            .padding(10.dp).fillMaxWidth(),
                             colors = ButtonDefaults.buttonColors(containerColor = Color.Red)) {
                             Row(verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.Center){
                                 Image(
                                     painter = painterResource(id = R.drawable.pizzapp__8_),
                                     contentDescription = null,
-                                    modifier = Modifier.size(35.dp),
+                                    modifier = Modifier.size(60.dp),
+                                    contentScale = ContentScale.Fit
 
                                 )
                                 Spacer(modifier = Modifier.width(10.dp))
                                 Text(text = "Reseña de alguna pizza")
                             }
                         }
+                    Spacer(modifier = Modifier.weight(1f))
                 }
             }
         }

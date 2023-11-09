@@ -31,7 +31,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.pizzapp.Screen.InfoRestaurant
-import com.example.pizzapp.Screen.InfoRestaurant
 import com.example.pizzapp.reviews.Reviews
 import com.example.pizzapp.screen.InitialScreen
 import com.example.pizzapp.screen.MyProfileScreen
