@@ -1,4 +1,4 @@
-package com.example.pizzapp.Screen
+package com.example.pizzapp.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -44,7 +44,7 @@ fun MyReviewScreen(navController: NavController) {
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f) // Esto asigna un peso de 1 a la Box
-                .background(Color(144, 167, 76))
+                .background(Color(255, 204, 51, 255))
         ) {
 
         Column(

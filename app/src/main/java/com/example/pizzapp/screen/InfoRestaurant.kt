@@ -110,9 +110,9 @@ fun info(){
                             modifier = Modifier
                                 .padding(5.dp)
                                 .align(Alignment.CenterHorizontally))
-                        Text(text = "* Pollo con champiñones", color = Color.Black)
-                        Text(text = "* Piña", color = Color.Black)
-                        Text(text = "* Peperoni", color = Color.Black)
+                        Text(text = "Pollo con champiñones", color = Color.Black)
+                        Text(text = "Piña", color = Color.Black)
+                        Text(text = "Peperoni", color = Color.Black)
                     }
 
                 }
@@ -180,8 +180,8 @@ fun buttonReview(navController: NavController){
         modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp),
-        verticalArrangement = Arrangement.Bottom, // Coloca el contenido en la parte inferior de la Column.
-        horizontalAlignment = Alignment.CenterHorizontally // Alinea el contenido horizontalmente en el centro.
+        verticalArrangement = Arrangement.Bottom,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Button(
             onClick = { navController.navigate("reviews") },
