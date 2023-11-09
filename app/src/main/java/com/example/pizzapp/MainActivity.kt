@@ -30,10 +30,10 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.pizzapp.screen.InitialScreen
+import com.example.pizzapp.screen.MyProfileScreen
+import com.example.pizzapp.screen.MyReviewScreen
 import com.example.pizzapp.Screen.InfoRestaurant
-import com.example.pizzapp.Screen.InitialScreen
-import com.example.pizzapp.Screen.MyProfileScreen
-import com.example.pizzapp.Screen.MyReviewScreen
 import com.example.pizzapp.reviews.Reviews
 import com.example.pizzapp.ui.theme.PizzAppTheme
 import com.google.firebase.firestore.FirebaseFirestore
@@ -76,7 +76,13 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("info-restaurant"){
                             InfoRestaurant(navController = navController)
-                            
+
+                        }
+                        composable("agregar_reseña_restaurante") {
+
+                        }
+                        composable("agregar_reseña_comida") {
+
                         }
                         composable("reviews"){
                             Reviews(navController =  navController)

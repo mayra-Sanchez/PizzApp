@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.pizzapp.FirestoreRepository
-import com.example.pizzapp.User
+import com.example.pizzapp.models.User
 import com.example.pizzapp.navbar.Navbar
 
 @Composable

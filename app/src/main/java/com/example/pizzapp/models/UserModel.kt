@@ -1,4 +1,4 @@
-package com.example.pizzapp
+package com.example.pizzapp.models
 
 data class User(
     var nombre: String? = null,
