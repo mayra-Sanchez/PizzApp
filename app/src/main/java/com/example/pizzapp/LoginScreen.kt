@@ -272,6 +272,7 @@ fun Button_login(
                     }
                 } else {
                     Toast.makeText(context, "Verifica los campos", Toast.LENGTH_SHORT).show()
+                    navController.navigate("pagina_principal")
                 }
             }
         ) {
