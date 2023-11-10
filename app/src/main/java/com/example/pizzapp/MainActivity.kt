@@ -34,13 +34,17 @@ import com.example.pizzapp.screen.InitialScreen
 import com.example.pizzapp.screen.MyProfileScreen
 import com.example.pizzapp.screen.MyReviewScreen
 import com.example.pizzapp.Screen.InfoRestaurant
+import com.example.pizzapp.models.Pizzeria
 import com.example.pizzapp.reviews.Reviews
+import com.example.pizzapp.screen.AddReviewFood
+import com.example.pizzapp.screen.AddReviewPlace
 import com.example.pizzapp.ui.theme.PizzAppTheme
 import com.google.firebase.firestore.FirebaseFirestore
 
 
 private const val TAG = "MainActivity"
 class MainActivity : ComponentActivity() {
+    val pizzeria = Pizzeria(name = "Pizzería Delicioso", address = "Calle Principal 123")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate Called")
@@ -79,10 +83,10 @@ class MainActivity : ComponentActivity() {
 
                         }
                         composable("agregar_reseña_restaurante") {
-
+                            AddReviewPlace(navController = navController, pizzeria)
                         }
                         composable("agregar_reseña_comida") {
-
+                            AddReviewFood(navController = navController, pizzeria)
                         }
                         composable("reviews"){
                             Reviews(navController =  navController)

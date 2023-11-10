@@ -23,15 +23,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.pizzapp.models.Review
 import com.example.pizzapp.navbar.Navbar
 
-data class Review(
-    val reviewRestaurant: String,
-    val placeName: String,
-    val placeAddress: String,
-    val starRating: Int,
-    val pizzaType: String
-)
 @Composable
 fun MyReviewScreen(navController: NavController) {
     val reviews = getReviewsForUser()
