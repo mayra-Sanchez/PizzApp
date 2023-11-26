@@ -20,6 +20,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,6 +37,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.pizzapp.R
+import kotlinx.coroutines.delay
 
 
 @Composable
@@ -49,8 +51,31 @@ fun ResetPassword(navController: NavController){
     var code by remember { mutableStateOf(" ") }
     var isValidCode by remember { mutableStateOf(false) }
 
+    var newCode by remember {
+        mutableStateOf(" ")
+    }
+
+    var isValidNewCode by remember {
+        mutableStateOf(false)
+    }
+
     var passwordVisible2 by remember { mutableStateOf(false) }
 
+    var isButtonEnabled by remember { mutableStateOf(false) }
+    var isInputEnabled by remember { mutableStateOf(true) }
+    var isInputPasswordEnabled by remember { mutableStateOf(true) }
+    var isButtonPasswordEnabled by remember { mutableStateOf(true) }
+
+    LaunchedEffect(key1 = isButtonEnabled) {
+        if (!isButtonEnabled && isInputEnabled && isInputPasswordEnabled && isButtonPasswordEnabled) {
+            delay(15 * 60 * 1000)
+//            delay(10000) //Para un segundo
+            isButtonEnabled = true
+            isInputEnabled = false
+            isInputPasswordEnabled = false
+            isButtonPasswordEnabled = false
+        }
+    }
 
     Box(modifier = Modifier
         .fillMaxSize()
@@ -72,8 +97,9 @@ fun ResetPassword(navController: NavController){
                         .align(Alignment.Center)) {
                     Image()
                     verifityCode(code = code, codeChange = {
-                        code = it}, isValidCode = isValidCode)
+                        code = it}, isValidCode = isValidCode, isInputEnabled = isInputEnabled)
                     NewPassword(
+                        isInputPasswordEnabled = isInputPasswordEnabled,
                         password = password2,
                         passwordChange = {
                             password2 = it
@@ -84,11 +110,16 @@ fun ResetPassword(navController: NavController){
                         isValidPassword = isValidPassword2
                     )
                     updatePassword(
+                        isButtonPasswordEnabled = isButtonPasswordEnabled,
                         context = context,
                         isValidPassword = isValidPassword2,
                         password2 = password2,
                         navController = navController
                     )
+                    sendCodeAgain(navController = navController, isButtonEnabled = isButtonEnabled,
+                        onSendCodeClicked = {
+                        isButtonEnabled = false
+                    } )
                 }
             }
         }
@@ -98,6 +129,7 @@ fun ResetPassword(navController: NavController){
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewPassword(
+    isInputPasswordEnabled: Boolean,
     password: String,
     passwordChange: (String)->Unit,
     passwordVisible: Boolean,
@@ -122,6 +154,7 @@ fun NewPassword(
             onValueChange = passwordChange,
             maxLines = 1,
             singleLine = true,
+            enabled = isInputPasswordEnabled,
             label  = { Text("Contraseña") },
             colors = if(isValidPassword){
                 TextFieldDefaults.outlinedTextFieldColors(
@@ -170,7 +203,8 @@ fun PasswordVisibility2(
 fun verifityCode(
     code: String,
     codeChange: (String)->Unit,
-    isValidCode: Boolean
+    isValidCode: Boolean,
+    isInputEnabled: Boolean
 ){
     Row(
         Modifier
@@ -183,24 +217,29 @@ fun verifityCode(
             value = code,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             onValueChange = codeChange,
-            label = { Text("Codigo") },
+            label = { Text("Código") },
             singleLine = true,
             maxLines = 1,
+            enabled = isInputEnabled
         )
     }
 }
 
 @Composable
-fun updatePassword(context: Context,
-             isValidPassword: Boolean,
-             password2: String,
-             navController: NavController){
+fun updatePassword(
+    isButtonPasswordEnabled: Boolean,
+    context: Context,
+    isValidPassword: Boolean,
+    password2: String,
+    navController: NavController
+    ){
     Row(horizontalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxWidth(),
     ){
         androidx.compose.material3.Button(
             colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
             modifier = Modifier.fillMaxWidth(),
+            enabled = isButtonPasswordEnabled,
             onClick = {
                 if (isValidPassword) {
                     Toast.makeText(context, "Contraseña actualizada", Toast.LENGTH_SHORT).show()
@@ -214,5 +253,24 @@ fun updatePassword(context: Context,
             Text(text = "Cambiar contraseña")
         }
 
+
     }
+}
+
+@Composable
+fun sendCodeAgain(navController: NavController, isButtonEnabled: Boolean, onSendCodeClicked: () -> Unit){
+    androidx.compose.material3.Button(
+        colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+        modifier = Modifier.fillMaxWidth(),
+        onClick = {
+            if (isButtonEnabled){
+                onSendCodeClicked()
+            }
+            navController.navigate("forgot-password")
+        },
+        enabled = isButtonEnabled
+    ) {
+        Text(text = "Mandar código otra vez")
+    }
+
 }
