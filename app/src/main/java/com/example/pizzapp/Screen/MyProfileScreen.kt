@@ -1,4 +1,4 @@
-package com.example.pizzapp.screen
+package com.example.pizzapp.Screen
 
 import android.content.Context
 import android.widget.Toast

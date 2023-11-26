@@ -31,14 +31,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.pizzapp.Screen.InfoRestaurant
+import com.example.pizzapp.Screen.ResetPassword
 import com.example.pizzapp.reviews.Reviews
-import com.example.pizzapp.screen.InitialScreen
-//import com.example.pizzapp.screen.MyProfileScreen
-import com.example.pizzapp.screen.AddReviewFood
-import com.example.pizzapp.screen.AddReviewPlace
-import com.example.pizzapp.screen.MyProfile
-import com.example.pizzapp.screen.MyReview
-import com.example.pizzapp.screen.MyReviewPlaceScreen
+import com.example.pizzapp.Screen.AddReviewFood
+import com.example.pizzapp.Screen.InitialScreen
+import com.example.pizzapp.Screen.AddReviewPlace
+import com.example.pizzapp.Screen.ForgotPassword
+import com.example.pizzapp.Screen.MyProfile
+import com.example.pizzapp.Screen.MyReview
+import com.example.pizzapp.Screen.MyReviewPlaceScreen
 import com.example.pizzapp.ui.theme.PizzAppTheme
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -94,6 +95,12 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("reviews"){
                             Reviews(navController =  navController)
+                        }
+                        composable("forgot-password"){
+                            ForgotPassword(navController = navController)
+                        }
+                        composable("reset-password"){
+                            ResetPassword(navController = navController)
                         }
                     }
                 }

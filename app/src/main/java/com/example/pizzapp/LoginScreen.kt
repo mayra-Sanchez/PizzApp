@@ -37,8 +37,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
 @Composable
@@ -59,11 +61,12 @@ fun LoginScreen(navController: NavController) {
         Column(
             Modifier
                 .align(Alignment.Center)
-                .padding(16.dp)
+                .padding(10.dp)
                 .fillMaxWidth()) {
             Box(
                 modifier = Modifier
-                    .padding(12.dp).clip(RoundedCornerShape(10.dp))
+                    .padding(8.dp)
+                    .clip(RoundedCornerShape(10.dp))
                     .background(Color(249, 238, 201)),
             ) {
                 Column(
@@ -99,6 +102,7 @@ fun LoginScreen(navController: NavController) {
                         password = password,
                         navController = navController
                     )
+                    lostPassword(navController = navController)
                     DontHaveAccount(navController = navController)
                 }
             }
@@ -111,7 +115,9 @@ fun ImageLogin(navController: NavController){
     Row(
         horizontalArrangement = Arrangement.Center) {
         Image(
-            modifier = Modifier.size(400.dp).clickable {  navController.navigate("inicio") },
+            modifier = Modifier
+                .size(400.dp)
+                .clickable { navController.navigate("inicio") },
             painter = painterResource(id = R.drawable.logologin),
             contentDescription = null,
         )
@@ -126,21 +132,51 @@ fun DontHaveAccount(navController: NavController){
         horizontalArrangement = Arrangement.Center) {
         Text(
             text = "¿No tienes una cuenta?",
+            style = TextStyle(fontSize = 12.sp),
             color = Color.Black,
             modifier = Modifier
-                .padding(5.dp)
+                .padding(2.dp)
         )
 
         Text(
             text = "Registrate",
+            style = TextStyle(fontSize = 12.sp),
             color = Color.Blue,
             modifier = Modifier
-                .padding(5.dp).clickable {
+                .padding(2.dp)
+                .clickable {
                     navController.navigate("registro")
                 }
         )
     }
 
+}
+
+@Composable
+fun lostPassword(navController: NavController){
+    Row(
+        Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center) {
+        Text(
+            text = "¿Olvidó su contraseña?",
+            style = TextStyle(fontSize = 12.sp),
+            color = Color.Black,
+            modifier = Modifier
+                .padding(2.dp)
+        )
+
+        Text(
+            text = "Reestablecer contraseña",
+            style = TextStyle(fontSize = 12.sp),
+            color = Color.Blue,
+            modifier = Modifier
+                .padding(2.dp)
+                .clickable {
+                    navController.navigate("forgot-password")
+                }
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
