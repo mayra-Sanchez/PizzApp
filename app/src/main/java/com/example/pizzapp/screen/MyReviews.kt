@@ -33,7 +33,7 @@ data class Review(
     val pizzaType: String
 )
 @Composable
-fun MyReviewScreen(navController: NavController) {
+fun MyReview(navController: NavController) {
     val reviews = getReviewsForUser()
 
     Column(

@@ -34,7 +34,7 @@ import com.example.pizzapp.User
 import com.example.pizzapp.navbar.Navbar
 
 @Composable
-fun MyProfileScreen(navController: NavController) {
+fun MyProfile(navController: NavController) {
     val context = LocalContext.current
     val firestoreRepository = FirestoreRepository()
 

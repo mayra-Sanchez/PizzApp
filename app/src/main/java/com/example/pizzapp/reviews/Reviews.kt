@@ -62,7 +62,7 @@ fun Reviews(navController: NavController){
                         modifier = Modifier
                             .padding(10.dp)
                             .align(Alignment.Start))
-                    Button(onClick = { /*TODO*/ },
+                    Button(onClick = { navController.navigate("crear_reseñas_lugar")},
                         modifier = Modifier
                             .padding(10.dp).fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Red)) {
@@ -78,7 +78,7 @@ fun Reviews(navController: NavController){
                             Text(text = "Reseña del restaurante")
                         }
                     }
-                        Button(onClick = { /*TODO*/ },
+                        Button(onClick = { navController.navigate("crear_reseñas_pizza") },
                             modifier = Modifier
                             .padding(10.dp).fillMaxWidth(),
                             colors = ButtonDefaults.buttonColors(containerColor = Color.Red)) {

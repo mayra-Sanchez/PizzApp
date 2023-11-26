@@ -23,10 +23,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.pizzapp.Pizzerias
 import com.example.pizzapp.navbar.Navbar
 
 @Composable
-fun MyReviewPlaceScreen(navController: NavController, pizzeria: Pizzeria) {
+fun MyReviewPlaceScreen(navController: NavController, pizzeria: Pizzerias) {
     val reviews = getReviewsForPlaceAndUser(pizzeria)
 
     Column(
@@ -57,6 +58,7 @@ fun MyReviewPlaceScreen(navController: NavController, pizzeria: Pizzeria) {
                     text = "Mis reseñas",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
+                    color = Color(0xFFFFFFFF),
                     modifier = Modifier
                         .padding(16.dp)
                         .align(Alignment.CenterHorizontally) // Centrar verticalmente
@@ -82,37 +84,30 @@ fun MyReviewPlaceScreen(navController: NavController, pizzeria: Pizzeria) {
     }
 }
 
-data class Pizzeria(
-    val name: String,
-    val address: String
-)
-
-val pizzeria = Pizzeria(name = "Pizzería Delicioso", address = "Calle Principal 123")
-
 // Ejemplo de reseñas del mismo usuario para la pizzería
-fun getReviewsForPlaceAndUser(pizzeria: Pizzeria): List<Review> {
+fun getReviewsForPlaceAndUser(pizzeria: Pizzerias): List<Review> {
     // Simulación de reseñas del usuario en una pizzeria específica
     return listOf(
         Review(
             reviewRestaurant = "Gran lugar para pizza!",
-            pizzaType = "Margherita",
             placeName = pizzeria.name,
             placeAddress = pizzeria.address,
-            starRating = 5
+            starRating = 5,
+            pizzaType = "Margherita"
         ),
         Review(
             reviewRestaurant = "Buen ambiente y servicio.",
-            pizzaType = "Pepperoni",
             placeName = pizzeria.name,
             placeAddress = pizzeria.address,
-            starRating = 4
+            starRating = 4,
+            pizzaType = "Pepperoni"
         ),
         Review(
             reviewRestaurant = "Probé la pizza de hongos, ¡deliciosa!",
-            pizzaType = "Hongo",
             placeName = pizzeria.name,
             placeAddress = pizzeria.address,
-            starRating = 4
+            starRating = 4,
+            pizzaType = "Hongo"
         )
     )
 }

@@ -1,6 +1,5 @@
 package com.example.pizzapp.screen
 
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -59,7 +58,7 @@ fun InitialScreen(navController: NavController) {
                     .align(Alignment.CenterHorizontally))
             LazyColumn(modifier = Modifier.fillMaxSize()){
                 items(10){
-                    index -> restaurants(navController = navController)
+                        index -> restaurants(navController = navController)
                 }
             }
         }
@@ -72,38 +71,38 @@ fun search(
     restaurant:String,
     restaurantChange: (String)->Unit,
 ){
-        Row(modifier = Modifier
-            .padding(20.dp)
-            .clip(RoundedCornerShape(15.dp))
-            .background(Color.Transparent),
-            verticalAlignment = Alignment.CenterVertically) {
-            Image(
-                painter = painterResource(id = R.drawable.pizzapp__7_),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(70.dp)
-                    .padding(8.dp),
-                contentScale = ContentScale.Fit
-            )
-            TextField(
-                value = restaurant,
-                onValueChange = restaurantChange,
-                modifier = Modifier
-                    .clip(RoundedCornerShape(15.dp))
-                    .shadow(10.dp, shape = RoundedCornerShape(10.dp))
-                    .background(Color.Transparent)
-                    .fillMaxWidth()
-                    ,
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Search
-                ),
-                keyboardActions = KeyboardActions(
-                    onSearch = {
+    Row(modifier = Modifier
+        .padding(20.dp)
+        .clip(RoundedCornerShape(15.dp))
+        .background(Color.Transparent),
+        verticalAlignment = Alignment.CenterVertically) {
+        Image(
+            painter = painterResource(id = R.drawable.pizzapp__7_),
+            contentDescription = null,
+            modifier = Modifier
+                .size(70.dp)
+                .padding(8.dp),
+            contentScale = ContentScale.Fit
+        )
+        TextField(
+            value = restaurant,
+            onValueChange = restaurantChange,
+            modifier = Modifier
+                .clip(RoundedCornerShape(15.dp))
+                .shadow(10.dp, shape = RoundedCornerShape(10.dp))
+                .background(Color.Transparent)
+                .fillMaxWidth()
+            ,
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Search
+            ),
+            keyboardActions = KeyboardActions(
+                onSearch = {
 
-                    }
-                ),
-            )
-        }
+                }
+            ),
+        )
+    }
 
 
 }
@@ -129,13 +128,13 @@ fun restaurants(navController: NavController) {
             )
             Box(modifier = Modifier.fillMaxWidth().padding(10.dp)) {
                 Row {
-                        Text(
-                            text = "Somos una cadena de restaurantes de comida italiana que fusiona diferentes ingredientes de la gastronomía",
-                            style = TextStyle(
-                                fontSize = 16.sp, lineHeight = 24.sp
-                            ),
-                            modifier = Modifier.weight(2f).padding(10.dp)
-                        )
+                    Text(
+                        text = "Somos una cadena de restaurantes de comida italiana que fusiona diferentes ingredientes de la gastronomía",
+                        style = TextStyle(
+                            fontSize = 16.sp, lineHeight = 24.sp
+                        ),
+                        modifier = Modifier.weight(2f).padding(10.dp)
+                    )
 
                     Image(
                         painter = painterResource(id = R.drawable.logok_12a17e4a),
@@ -152,4 +151,3 @@ fun restaurants(navController: NavController) {
     }
 
 }
-
