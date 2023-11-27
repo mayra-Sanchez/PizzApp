@@ -42,6 +42,9 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 @Composable
 fun LoginScreen(navController: NavController) {
@@ -302,9 +305,8 @@ fun Button_login(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
                 if (isValidEmail && isValidPassword) {
-                    login(context, email, password) {
-
-                        navController.navigate("pagina_principal")
+                    login(context, email, password) { token ->
+                        navController.navigate("mi_perfil/${token}")
                     }
                 } else {
                     Toast.makeText(context, "Verifica los campos", Toast.LENGTH_SHORT).show()
@@ -317,17 +319,29 @@ fun Button_login(
     }
 }
 
-fun login(context: Context, email: String, password: String, onSuccess: () -> Unit) {
-    val firestoreRepository = FirestoreRepository()
+fun login(context: Context, email: String, password: String, onSuccess:(String)-> Unit) {
+    val credentials = CredentialsLogin(email, password)
+    RetrofitClient.apiService.login(credentials).enqueue(object : Callback<TokenResponse> {
+        override fun onResponse(call: Call<TokenResponse>, response: Response<TokenResponse>) {
+            if (response.isSuccessful) {
+                val token = response.body()?.token ?: ""
 
-    firestoreRepository.loginUser(email, password,
-        onSuccess = {
-            Toast.makeText(context, "Inicio de sesión exitoso", Toast.LENGTH_LONG).show()
-            onSuccess()
-        },
-        onFailure = { exception ->
-            // Asegurándonos de que estamos utilizando una cadena para el toast
-            Toast.makeText(context, exception.message ?: "Error desconocido", Toast.LENGTH_LONG).show()
-        })
+                Toast.makeText(context, "Inicio de sesión exitoso", Toast.LENGTH_LONG).show()
+                onSuccess(token)
+                
+            } else {
+                Toast.makeText(context, "Error al iniciar sesión", Toast.LENGTH_LONG).show()
+            }
+        }
+
+        override fun onFailure(call: Call<TokenResponse>, t: Throwable) {
+            // Aquí manejas el caso de fallo en la llamada, como una excepción o problema de conexión
+            println(t.message)
+            Toast.makeText(context, "Error de conexión: ${t.message}", Toast.LENGTH_LONG).show()
+        }
+    })
 }
+
+
+
 

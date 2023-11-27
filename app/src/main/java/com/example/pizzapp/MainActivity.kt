@@ -1,5 +1,6 @@
 package com.example.pizzapp
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -27,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -37,27 +39,39 @@ import com.example.pizzapp.Screen.AddReviewFood
 import com.example.pizzapp.Screen.InitialScreen
 import com.example.pizzapp.Screen.AddReviewPlace
 import com.example.pizzapp.Screen.ForgotPassword
-import com.example.pizzapp.Screen.MyProfile
+import com.example.pizzapp.Screen.MyProfileScreen
 import com.example.pizzapp.Screen.MyReview
 import com.example.pizzapp.Screen.MyReviewPlaceScreen
+import androidx.navigation.navArgument
+
 import com.example.pizzapp.ui.theme.PizzAppTheme
 import com.google.firebase.firestore.FirebaseFirestore
 
 
 private const val TAG = "MainActivity"
+
 class MainActivity : ComponentActivity() {
     val pizzeria = Pizzerias(name = "Pizzería Delicioso", address = "Calle Principal 123")
+
+    private var navController: NavController? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate Called")
+
         setContent {
+            val navController = rememberNavController()
+
+            // Asignar el NavController al MainActivity
+            this@MainActivity.navController = navController
+
+            val tokenJWT = getTokenJWT()
+
             PizzAppTheme {
-                val navController = rememberNavController()
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color =Color(0xFFF9EEC9)
+                    color = Color(0xFFF9EEC9)
                 ) {
-
                     NavHost(
                         navController = navController,
                         startDestination = "inicio"
@@ -74,8 +88,13 @@ class MainActivity : ComponentActivity() {
                         composable("pagina_principal") {
                             InitialScreen(navController = navController)
                         }
-                        composable("mi_perfil") {
-                            MyProfile(navController = navController)
+                        composable( route = "mi_perfil/{jwtToken}",
+                            arguments = listOf(navArgument("jwtToken") { type = NavType.StringType })
+                        ) { backStackEntry ->
+                            MyProfileScreen(
+                                navController = navController,
+                                jwtToken = backStackEntry.arguments?.getString("jwtToken") ?: ""
+                            )
                         }
                         composable("mis_reseñas") {
                             MyReview(navController = navController)
@@ -101,15 +120,19 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("reset-password"){
                             ResetPassword(navController = navController)
-                        }
+                    }
                     }
                 }
             }
         }
     }
+
     var db = FirebaseFirestore.getInstance()
 
-
+    private fun getTokenJWT(): String {
+        val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return ""
+        return sharedPref.getString("JWT_TOKEN", "") ?: ""
+    }
     override fun onStart() {
         super.onStart()
         Log.d(TAG, "onStart Called")
@@ -140,6 +163,8 @@ class MainActivity : ComponentActivity() {
         Log.d(TAG, "onDestroy Called")
     }
 }
+
+
 
 @Composable
 fun Inicio(navController: NavController) {

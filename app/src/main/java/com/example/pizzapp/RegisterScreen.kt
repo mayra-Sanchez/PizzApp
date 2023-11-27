@@ -22,6 +22,10 @@ import androidx.navigation.NavController
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.platform.testTag
+import retrofit2.Call
+import retrofit2.Response
+import javax.security.auth.callback.Callback
 
 @Composable
 fun RegisterScreen(navController: NavController) {
@@ -351,7 +355,6 @@ fun YouHaveAccount(navController: NavController){
     }
 
 }
-
 @Composable
 fun ButtonRegister(
     context: Context,
@@ -366,7 +369,6 @@ fun ButtonRegister(
     isChecked: Boolean
 
 ) {
-    val firestoreRepository = FirestoreRepository()
 
     Row(
         Modifier
@@ -375,32 +377,26 @@ fun ButtonRegister(
         horizontalArrangement = Arrangement.Center
     ) {
         Button(
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
-            modifier = Modifier.fillMaxWidth(),
+            //... (misma configuración del botón)
             onClick = {
-                if (isValidEmail && isValidPassword ){
-                    if(!isChecked){
-                        Toast.makeText(context, "Tienes que aceptar los términos y condiciones para hacer el registro", Toast.LENGTH_LONG).show()
-                    }
-                    else {
-                        val user = User(nombre, apellido, email, nombreUsuario, password)
-                        firestoreRepository.createUser(user,
-                            onSuccess = {
-                                Toast.makeText(
-                                    context,
-                                    "Usuario registrado con éxito",
-                                    Toast.LENGTH_LONG
-                                ).show()
+                if (isValidEmail && isValidPassword) {
+                    val nuevoUsuario = User(nombre, email, nombreUsuario, password, apellido)
+                    RetrofitClient.apiService.crearUsuario(nuevoUsuario).enqueue(object: retrofit2.Callback<TokenResponse> {
+                        override fun onResponse(call: Call<TokenResponse>, response: Response<TokenResponse>) {
+                            if (response.isSuccessful) {
+                                val token = response.body()?.token
+                                // Haz algo con el token, por ejemplo, guardarlo y navegar a otra pantalla
+                                Toast.makeText(context, "Usuario registrado con éxito", Toast.LENGTH_LONG).show()
                                 navController.navigate("login")
-                            },
-                            onFailure = { e ->
-                                Toast.makeText(
-                                    context,
-                                    "Error al registrar: ${e.message}",
-                                    Toast.LENGTH_LONG
-                                ).show()
-                            })
-                    }
+                            } else {
+                                Toast.makeText(context, "Error en el registro: ${response.message()}", Toast.LENGTH_LONG).show()
+                            }
+                        }
+
+                        override fun onFailure(call: Call<TokenResponse>, t: Throwable) {
+                            Toast.makeText(context, "Error en la comunicación: ${t.message}", Toast.LENGTH_LONG).show()
+                        }
+                    })
                 } else {
                     Toast.makeText(context, "Revisa los campos", Toast.LENGTH_LONG).show()
                 }
@@ -410,3 +406,7 @@ fun ButtonRegister(
         }
     }
 }
+fun Register(context: Context){
+    Toast.makeText(context, "Aca se hace la funcionalidad", Toast.LENGTH_LONG).show()
+}
+

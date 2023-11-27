@@ -12,3 +12,10 @@ data class Pizzerias(
     val name: String,
     val address: String
 )
+data class CredentialsLogin(
+    val email: String,
+    val password: String
+)
+data class TokenResponse(
+    val token: String
+)
