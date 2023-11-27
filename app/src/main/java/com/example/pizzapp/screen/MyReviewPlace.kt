@@ -1,4 +1,4 @@
-package com.example.pizzapp.screen
+package com.example.pizzapp.Screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -23,7 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.pizzapp.Pizzerias
+import com.example.pizzapp.models.Pizzerias
 import com.example.pizzapp.navbar.Navbar
 
 @Composable

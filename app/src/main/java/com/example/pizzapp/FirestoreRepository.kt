@@ -3,6 +3,7 @@ package com.example.pizzapp
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import com.example.pizzapp.models.User
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
