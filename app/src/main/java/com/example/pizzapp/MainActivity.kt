@@ -39,6 +39,8 @@ import com.example.pizzapp.Screen.MyReview
 import com.example.pizzapp.Screen.MyReviewPlaceScreen
 import com.example.pizzapp.models.Pizzerias
 import com.example.pizzapp.reviews.Reviews
+import com.example.pizzapp.Screen.ResetPassword
+import com.example.pizzapp.Screen.ForgotPassword
 import com.example.pizzapp.ui.theme.PizzAppTheme
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -94,6 +96,12 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("reviews"){
                             Reviews(navController =  navController)
+                        }
+                        composable("forgot-password"){
+                            ForgotPassword(navController = navController)
+                        }
+                        composable("reset-password"){
+                            ResetPassword(navController = navController)
                         }
                     }
                 }
