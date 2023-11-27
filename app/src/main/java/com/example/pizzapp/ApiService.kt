@@ -1,5 +1,8 @@
 package com.example.pizzapp
 
+import com.example.pizzapp.models.CredentialsLogin
+import com.example.pizzapp.models.TokenResponse
+import com.example.pizzapp.models.User
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

@@ -10,13 +10,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,16 +27,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-
 import com.example.pizzapp.decodeJWT
 import com.example.pizzapp.navbar.Navbar
+import com.google.gson.Gson
 
 
 @Composable
 fun MyProfileScreen(navController: NavController,jwtToken: String) { // Asume que el token JWT es pasado como argumento
     val context = LocalContext.current
     val userData = decodeJWT(jwtToken) // Decodifica la información del usuario desde el token JWT
-    
+
     // Variables para almacenar los datos del usuario
     var email by remember { mutableStateOf(userData?.get("email") as? String ?: "") }
     var isValidEmail by remember { mutableStateOf(false) }
@@ -48,102 +45,56 @@ fun MyProfileScreen(navController: NavController,jwtToken: String) { // Asume qu
     var nombre by remember { mutableStateOf(userData?.get("nombre") as? String ?: "") }
     var apellido by remember { mutableStateOf(userData?.get("apellido") as? String ?: "") }
 
-   
-
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
+            .background(Color(144, 167, 76))
     ) {
-        Box(
+        Navbar(navController)
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .background(Color(255, 204, 51, 255))
+                .align(Alignment.Center)
+                .padding(16.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            Text(text = "Mi Perfil", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+            ActualizarTexto("Nombre", nombre, onValueChange = { nombre = it })
+            ActualizarTexto("Apellido", apellido, onValueChange = { apellido = it })
+            ActualizarTexto("Nombre de Usuario", nombreUsuario, onValueChange = { nombreUsuario = it })
+            ActualizarTexto("Email", email, onValueChange = { email = it })
 
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Navbar(navController)
-                Text(
-                    text = "Mi perfil",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .align(Alignment.CenterHorizontally)
-                )
 
-                LazyColumn(
-                    modifier = Modifier
-                        .weight(1f) // Esto asigna un peso de 1 a LazyColumn
-                ) {
-                    item {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f)
-                                .background(Color(255, 204, 51, 255))
-                        ) {
+            ButtonUpdate(context = context,
+                isValidEmail = isValidEmail,
+                isValidPassword = isValidPassword,
+                email = email,
+                nombre = nombre,
+                apellido = apellido,
+                nombreUsuario = nombreUsuario,
+                navController = navController
+            )
 
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                            ) {
-                                Text(
-                                    text = "Nombre",
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.align(Alignment.Start).padding(8.dp)
-                                )
-                                ActualizarTexto(nombre, onValueChange = { nombre = it })
-                                Text(
-                                    text = "Apellido",
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.align(Alignment.Start).padding(8.dp)
-                                )
-                                ActualizarTexto(apellido, onValueChange = { apellido = it })
-                                Text(
-                                    text = "Nombre de usuario",
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.align(Alignment.Start).padding(8.dp)
-                                )
-                                ActualizarTexto(
-                                    nombreUsuario,
-                                    onValueChange = { nombreUsuario = it })
-                                Text(
-                                    text = "Email",
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.align(Alignment.Start).padding(8.dp)
-                                )
-                                ActualizarTexto(email, onValueChange = { email = it })
-                                Text(
-                                    text = "Contraseña",
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.align(Alignment.Start).padding(8.dp)
-                                )
-                            }
-                        }
-                    }
-                }
-
-                ButtonUpdate(context = context,
-                    isValidEmail = isValidEmail,
-                    isValidPassword = isValidPassword,
-                    email = email,
-                    nombre = nombre,
-                    apellido = apellido,
-                    nombreUsuario = nombreUsuario,
-                    navController = navController
-                )
-            }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ActualizarTexto(
+    label: String,
+    value: String,
+    onValueChange: (String) -> Unit
+) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(label) },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+    )
 }
 
 @Composable
@@ -182,20 +133,4 @@ fun ButtonUpdate(
         }
 
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ActualizarTexto(
-    value: String,
-    onValueChange: (String) -> Unit
-) {
-    TextField(
-        value = value,
-        onValueChange = onValueChange,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .background(Color.White) // Añade este modificador
-    )
 }

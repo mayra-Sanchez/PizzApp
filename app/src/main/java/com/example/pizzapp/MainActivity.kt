@@ -32,18 +32,18 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.pizzapp.Screen.InfoRestaurant
-import com.example.pizzapp.Screen.ResetPassword
-import com.example.pizzapp.reviews.Reviews
+import androidx.navigation.navArgument
 import com.example.pizzapp.Screen.AddReviewFood
-import com.example.pizzapp.Screen.InitialScreen
 import com.example.pizzapp.Screen.AddReviewPlace
-import com.example.pizzapp.Screen.ForgotPassword
-import com.example.pizzapp.Screen.MyProfileScreen
+import com.example.pizzapp.Screen.InfoRestaurant
+import com.example.pizzapp.Screen.InitialScreen
 import com.example.pizzapp.Screen.MyReview
 import com.example.pizzapp.Screen.MyReviewPlaceScreen
-import androidx.navigation.navArgument
-
+import com.example.pizzapp.models.Pizzerias
+import com.example.pizzapp.reviews.Reviews
+import com.example.pizzapp.Screen.ResetPassword
+import com.example.pizzapp.Screen.ForgotPassword
+import com.example.pizzapp.Screen.MyProfileScreen
 import com.example.pizzapp.ui.theme.PizzAppTheme
 import com.google.firebase.firestore.FirebaseFirestore
 

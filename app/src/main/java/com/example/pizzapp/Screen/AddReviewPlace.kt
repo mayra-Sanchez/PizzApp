@@ -31,7 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.pizzapp.Pizzerias
+import com.example.pizzapp.models.Pizzerias
 import com.example.pizzapp.navbar.Navbar
 
 @Composable
@@ -55,15 +55,17 @@ fun AddReviewPlace(navController: NavController, pizzeria: Pizzerias) {
                     .fillMaxWidth()
             ) {
                 Navbar(navController)
-                Text(
-                    text = pizzeria.name,
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF741B0F),
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .align(Alignment.CenterHorizontally)
-                )
+                pizzeria.name?.let {
+                    Text(
+                        text = it,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF741B0F),
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .align(Alignment.CenterHorizontally)
+                    )
+                }
 
                 LazyColumn(
                     modifier = Modifier
@@ -114,10 +116,16 @@ fun AddReviewPlace(navController: NavController, pizzeria: Pizzerias) {
                                         .align(Alignment.Start)
                                         .padding(8.dp)
                                 )
-                                RatingBar(
-                                    rating = rating,
-                                    onRatingChanged = { newRating -> rating = newRating }
-                                )
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center, // Centra los elementos horizontalmente
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    RatingBar(
+                                        rating = rating,
+                                        onRatingChanged = { newRating -> rating = newRating }
+                                    )
+                                }
                                 Spacer(modifier = Modifier.height(16.dp))
                                 Button(
                                     onClick = {
@@ -137,7 +145,6 @@ fun AddReviewPlace(navController: NavController, pizzeria: Pizzerias) {
                                         fontWeight = FontWeight.Bold
                                     )
                                 }
-
                             }
                         }
                     }
@@ -146,6 +153,7 @@ fun AddReviewPlace(navController: NavController, pizzeria: Pizzerias) {
         }
     }
 }
+
 
 fun ButtonReviewPlace(review: String, rating: Int) {
     // Aquí puedes hacer lo que necesites con la reseña y la calificación

@@ -23,7 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.pizzapp.Pizzerias
+import com.example.pizzapp.models.Pizzerias
 import com.example.pizzapp.navbar.Navbar
 
 @Composable
