@@ -1,8 +1,11 @@
 package com.example.pizzapp.Screen
 
 import android.content.Context
+import android.net.Uri
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,10 +13,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -23,15 +29,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.rememberImagePainter
 import com.example.pizzapp.FirestoreRepository
+import com.example.pizzapp.R
 import com.example.pizzapp.models.User
 import com.example.pizzapp.navbar.Navbar
+import java.util.*
+
 
 @Composable
 fun MyProfile(navController: NavController) {
@@ -44,11 +57,10 @@ fun MyProfile(navController: NavController) {
     // Variables para almacenar los datos del usuario
     var email by remember { mutableStateOf("") }
     val isValidEmail by remember { mutableStateOf(false) }
-    var password by remember { mutableStateOf("") }
-    val isValidPassword by remember { mutableStateOf(false) }
     var nombre by remember { mutableStateOf("") }
     var apellido by remember { mutableStateOf("") }
     var nombreUsuario by remember { mutableStateOf("") }
+    var photoUri by remember { mutableStateOf<Uri?>(null) }
 
     // Si hay un usuario autenticado
     user?.let {
@@ -67,7 +79,6 @@ fun MyProfile(navController: NavController) {
                 apellido = user?.apellido ?: ""
                 nombreUsuario = user?.nombreUsuario ?: ""
                 email = user?.correo ?: ""
-                password = user?.password ?: ""
             } else {
                 // El documento no existe
             }
@@ -117,6 +128,12 @@ fun MyProfile(navController: NavController) {
                                 modifier = Modifier
                                     .fillMaxWidth()
                             ) {
+                                ProfileImage(
+                                    imageUri = photoUri,
+                                    onImageSelected = { selectedImageUri ->
+                                        photoUri = selectedImageUri
+                                    }
+                                )
                                 Text(
                                     text = "Nombre",
                                     fontSize = 13.sp,
@@ -147,13 +164,6 @@ fun MyProfile(navController: NavController) {
                                     modifier = Modifier.align(Alignment.Start).padding(8.dp)
                                 )
                                 ActualizarTexto(email, onValueChange = { email = it })
-                                Text(
-                                    text = "Contraseña",
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.align(Alignment.Start).padding(8.dp)
-                                )
-                                ActualizarTexto(password, onValueChange = { password = it })
                             }
                         }
                     }
@@ -161,9 +171,7 @@ fun MyProfile(navController: NavController) {
 
                 ButtonUpdate(context = context,
                     isValidEmail = isValidEmail,
-                    isValidPassword = isValidPassword,
                     email = email,
-                    password = password,
                     nombre = nombre,
                     apellido = apellido,
                     nombreUsuario = nombreUsuario,
@@ -176,12 +184,42 @@ fun MyProfile(navController: NavController) {
 }
 
 @Composable
+fun ProfileImage(
+    imageUri: Uri?,
+    onImageSelected: (Uri) -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .size(120.dp)
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.primary)
+            .clickable {
+                // TODO: Show image picker
+                onImageSelected(Uri.parse("content://media/external/images/media/123")) // Reemplaza con la lógica real
+            }
+
+    ) {
+        val painter: Painter = if (imageUri != null) {
+            rememberImagePainter(imageUri)
+        } else {
+            painterResource(id = R.drawable.ic_launcher_foreground) // Cambia con tu recurso de imagen predeterminado
+        }
+
+        Image(
+            painter = painter,
+            contentDescription = null,
+            modifier = Modifier
+                .fillMaxSize()
+        )
+    }
+}
+
+
+@Composable
 fun ButtonUpdate(
     context: Context,
     isValidEmail: Boolean,
-    isValidPassword: Boolean,
     email: String,
-    password: String,
     nombre: String,
     apellido: String,
     nombreUsuario: String,
@@ -198,13 +236,12 @@ fun ButtonUpdate(
     ) {
         Button(
             onClick = {
-                if (isValidEmail && isValidPassword) {
+                if (isValidEmail) {
                     val updatedData = mapOf(
                         "nombre" to nombre,
                         "apellido" to apellido,
                         "correo" to email,
-                        "nombreUsuario" to nombreUsuario,
-                        "password" to password
+                        "nombreUsuario" to nombreUsuario
                     )
                     firestoreRepository.updateUser(userId ?: "", updatedData,
                         onSuccess = {
@@ -218,7 +255,7 @@ fun ButtonUpdate(
                     Toast.makeText(context, "Revisa los campos", Toast.LENGTH_LONG).show()
                 }
             } ,
-            colors = ButtonDefaults.buttonColors(Color(249,238, 201))
+            colors = ButtonDefaults.buttonColors(Color(236, 83, 76))
         ) {
             Text(text = "Actualizar")
         }
