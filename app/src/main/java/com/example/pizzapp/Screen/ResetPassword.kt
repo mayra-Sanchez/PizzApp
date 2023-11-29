@@ -66,6 +66,10 @@ fun ResetPassword(navController: NavController){
     var isInputPasswordEnabled by remember { mutableStateOf(true) }
     var isButtonPasswordEnabled by remember { mutableStateOf(true) }
 
+    var count by remember {
+        mutableStateOf(0)
+    }
+
     LaunchedEffect(key1 = isButtonEnabled) {
         if (!isButtonEnabled && isInputEnabled && isInputPasswordEnabled && isButtonPasswordEnabled) {
             delay(15 * 60 * 1000)
@@ -114,7 +118,8 @@ fun ResetPassword(navController: NavController){
                         context = context,
                         isValidPassword = isValidPassword2,
                         password2 = password2,
-                        navController = navController
+                        navController = navController,
+                        count = count
                     )
                     sendCodeAgain(navController = navController, isButtonEnabled = isButtonEnabled,
                         onSendCodeClicked = {
@@ -215,6 +220,15 @@ fun verifityCode(
         OutlinedTextField(
             shape = RoundedCornerShape(10.dp),
             value = code,
+            colors = if(isValidCode){
+                TextFieldDefaults.outlinedTextFieldColors(
+                    focusedLabelColor = Color.Green,
+                    focusedBorderColor = Color.Green)
+            }else{
+                TextFieldDefaults.outlinedTextFieldColors(
+                    focusedLabelColor = Color.Red,
+                    focusedBorderColor = Color.Red)
+            },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             onValueChange = codeChange,
             label = { Text("Código") },
@@ -231,7 +245,8 @@ fun updatePassword(
     context: Context,
     isValidPassword: Boolean,
     password2: String,
-    navController: NavController
+    navController: NavController,
+    count: Int
     ){
     Row(horizontalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxWidth(),
@@ -242,10 +257,16 @@ fun updatePassword(
             enabled = isButtonPasswordEnabled,
             onClick = {
                 if (isValidPassword) {
-                    Toast.makeText(context, "Contraseña actualizada", Toast.LENGTH_SHORT).show()
-                    navController.navigate("login")
+                    if(count <= 4) {
+                        Toast.makeText(context, "Contraseña actualizada", Toast.LENGTH_SHORT).show()
+                        navController.navigate("login")
+                    }
+                    if(count > 4){
+                        Toast.makeText(context, "Excediste el numero de intentos", Toast.LENGTH_SHORT).show()
+                    }
 
                 } else {
+                    count + 1
                     Toast.makeText(context, "No se pudo actualizar la contraseña", Toast.LENGTH_SHORT).show()
                 }
             }

@@ -34,6 +34,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavHost
 import com.example.pizzapp.R
 
 @Composable
@@ -133,6 +134,7 @@ fun sendCode(context: Context,
             colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
             modifier = Modifier.fillMaxWidth(),
             onClick = {
+
                 if (isValidEmailP) {
                     Toast.makeText(context, "Enviando código", Toast.LENGTH_SHORT).show()
                     navController.navigate("reset-password")
