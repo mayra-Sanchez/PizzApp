@@ -13,7 +13,7 @@ android {
     defaultConfig {
         applicationId = "com.example.pizzapp"
         minSdk = 24
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -100,13 +100,11 @@ dependencies {
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
 
+    implementation("com.google.accompanist:accompanist-permissions:0.28.0")
     implementation ("com.google.code.gson:gson:2.8.8")
-    implementation("androidx.camera:camera-core:1.1.0-beta01")
-    implementation("androidx.camera:camera-camera2:1.1.0-beta01")
-    implementation("androidx.camera:camera-lifecycle:1.1.0-beta01")
-    implementation("androidx.camera:camera-video:1.1.0-beta01")
-    implementation("androidx.camera:camera-view:1.1.0-beta01")
-    implementation("androidx.camera:camera-extensions:1.1.0-beta01")
+    implementation("androidx.camera:camera-camera2:1.3.0-rc01")
+    implementation("androidx.camera:camera-lifecycle:1.3.0-rc01")
+    implementation("androidx.camera:camera-view:1.3.0-rc01")
     implementation("io.coil-kt:coil-compose:1.4.0")
 }
 

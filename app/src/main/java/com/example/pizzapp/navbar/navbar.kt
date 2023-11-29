@@ -40,125 +40,116 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.pizzapp.FirestoreRepository
 import com.example.pizzapp.R
-import com.example.pizzapp.decodeJWT
 import com.example.pizzapp.models.User
 
 
 @Composable
-fun Navbar(navController: NavController, jwtToken: String? = null) {
-    // Decodificar la información del usuario desde el token JWT
+fun Navbar(navController: NavController) {
     var isLogoutDialogOpen by remember { mutableStateOf(false) }
     var isLogoutDialogOpen2 by remember { mutableStateOf(false) }
-    jwtToken?.let {
-        val userData = decodeJWT(jwtToken)
-        var nombreUsuario by remember {
-            mutableStateOf(
-                userData?.get("nombreUsuario") as? String ?: ""
-            )
+
+    val firestoreRepository = FirestoreRepository()
+
+    // Obtener el usuario actual
+    val user = firestoreRepository.getCurrentUser()
+
+    // Variable para almacenar el nombre de usuario
+    var nombreUsuario by remember { mutableStateOf("") }
+
+    // Si hay un usuario autenticado
+    user?.let {
+        // Obtener el UID del usuario actual
+        val userId = it.uid
+
+        // Obtener el documento de usuario desde Firestore
+        val userDocument = firestoreRepository.getUserDocument(userId)
+
+        // Obtener los datos del documento
+        userDocument.get().addOnSuccessListener { documentSnapshot ->
+            if (documentSnapshot.exists()) {
+                val user = documentSnapshot.toObject(User::class.java)
+                // Asignar los datos del usuario a la variable
+                nombreUsuario = user?.nombreUsuario ?: ""
+            } else {
+                // El documento no existe
+            }
+        }.addOnFailureListener { e ->
+            // Ocurrió un error al obtener el documento
         }
+    }
 
-        var expanded by remember { mutableStateOf(false) }
+    var expanded by remember { mutableStateOf(false) }
 
-        Box(
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(80.dp)
+            .background(Color(249, 238, 201))
+    ) {
+        Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(80.dp)
-                .background(Color(249, 238, 201))
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
+            Box(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .weight(1f)
             ) {
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
+                // Assuming ImageInitial is a custom composable
+                ImageInitial(navController)
+            }
+            Spacer(modifier = Modifier.weight(1.5f))
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+            ) {
+                Text(text = nombreUsuario, color = Color.Black) // Cambiar el color del texto a negro
+            }
+            Box(
+                modifier = Modifier
+                    .weight(0.5f)
+            ) {
+                IconButton(
+                    onClick = {
+                        expanded = !expanded
+                    }
                 ) {
-                    // Assuming ImageInitial is a custom composable
-                    ImageInitial(navController)
+                    Icon(Icons.Default.Settings, contentDescription = "Configuración", tint = Color.Black) // Cambiar el color del ícono a negro
                 }
-
-                Spacer(modifier = Modifier.weight(1.5f))
-                Box(
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false },
                     modifier = Modifier
-                        .weight(1f)
-                ) {
-                    Text(
-                        text = nombreUsuario,
-                        color = Color.Black
-                    ) // Cambiar el color del texto a negro
-                }
-                Box(
-                    modifier = Modifier
-                        .weight(0.5f)
-                ) {
-                    IconButton(
+                        .padding(3.dp)
+                        .background(Color(249, 238, 201))
+                )
+                {
+                    DropdownMenuItem(text = { Text(text = "Mi perfil") }, leadingIcon = {Icon(Icons.Default.AccountCircle, contentDescription = "Mi perfil", tint = Color.Black)} , onClick = { navController.navigate("mi_perfil") } )
+                    DropdownMenuItem(text = { Text(text = "Mis reseñas")}, leadingIcon = {Icon(Icons.Default.Create, contentDescription = "Mis reseñas", tint = Color.Black)} , onClick = { navController.navigate("mis_reseñas") })
+                    DropdownMenuItem(
+                        text = { Text(text = "Cerrar sesión") },
+                        leadingIcon = {
+                            Icon(
+                                Icons.Default.ExitToApp,
+                                contentDescription = "Cerrar sesión",
+                                tint = Color.Black
+                            )
+                        },
                         onClick = {
-                            expanded = !expanded
+                            isLogoutDialogOpen = true
                         }
-                    ) {
-                        Icon(
-                            Icons.Default.Settings,
-                            contentDescription = "Configuración",
-                            tint = Color.Black
-                        ) // Cambiar el color del ícono a negro
-                    }
-                    DropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false },
-                        modifier = Modifier
-                            .padding(3.dp)
-                            .background(Color(249, 238, 201))
                     )
-                    {
-                        DropdownMenuItem(
-                            text = { Text(text = "Mi perfil") },
-                            leadingIcon = {
-                                Icon(
-                                    Icons.Default.AccountCircle,
-                                    contentDescription = "Mi perfil",
-                                    tint = Color.Black
-                                )
-                            },
-                            onClick = { navController.navigate("mi_perfil") })
-                        DropdownMenuItem(
-                            text = { Text(text = "Mis reseñas") },
-                            leadingIcon = {
-                                Icon(
-                                    Icons.Default.Create,
-                                    contentDescription = "Mis reseñas",
-                                    tint = Color.Black
-                                )
-                            },
-                            onClick = { navController.navigate("mis_reseñas") })
-                        DropdownMenuItem(
-                            text = { Text(text = "Cerrar sesión") },
-                            leadingIcon = {
-                                Icon(
-                                    Icons.Default.ExitToApp,
-                                    contentDescription = "Cerrar sesión",
-                                    tint = Color.Black
-                                )
-                            },
-                            onClick = {
-                                isLogoutDialogOpen = true
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text(text = "Eliminar mi cuenta") },
-                            leadingIcon = {
-                                Icon(
-                                    Icons.Default.Close,
-                                    contentDescription = "Eliminar cuenta",
-                                    tint = Color.Black
-                                )
-                            },
-                            onClick = {
-                                isLogoutDialogOpen2 = true
-                            }
-                        )
-                    }
+                    DropdownMenuItem(
+                        text = { Text(text = "Eliminar mi cuenta") },
+                        leadingIcon = {
+                            Icon(
+                                Icons.Default.Close, contentDescription = "Eliminar cuenta", tint = Color.Black
+                            )},
+                        onClick = {
+                            isLogoutDialogOpen2 = true
+                        }
+                    )
                 }
             }
 
@@ -228,10 +219,9 @@ fun Navbar(navController: NavController, jwtToken: String? = null) {
 }
 
 @Composable
-fun ImageInitial(navController: NavController) {
+fun ImageInitial(navController: NavController){
     Row(
-        horizontalArrangement = Arrangement.Start
-    ) {
+        horizontalArrangement = Arrangement.Start) {
         Image(
             modifier = Modifier
                 .size(400.dp)
