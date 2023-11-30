@@ -37,7 +37,7 @@ import com.example.pizzapp.R
 import com.example.pizzapp.navbar.Navbar
 
 @Composable
-fun InitialScreen(navController: NavController) {
+fun InitialScreen(navController: NavController,jwtToken:String) {
 
     var restaurantChange2: (String) -> Unit = { newValue ->
         println("Nuevo valor: $newValue")
@@ -49,7 +49,7 @@ fun InitialScreen(navController: NavController) {
         Column(
             Modifier
                 .fillMaxWidth()){
-            Navbar(navController)
+            Navbar(navController,jwtToken )
             search(restaurant = " ", restaurantChange = restaurantChange2)
             Text(text = "RESTAURANTES",
                 style = TextStyle(fontWeight = FontWeight.Bold), fontSize = 20.sp,

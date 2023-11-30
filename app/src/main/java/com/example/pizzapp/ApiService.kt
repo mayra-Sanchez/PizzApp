@@ -3,6 +3,10 @@ package com.example.pizzapp
 import com.example.pizzapp.models.CredentialsLogin
 import com.example.pizzapp.models.TokenResponse
 import com.example.pizzapp.models.User
+import com.example.pizzapp.models.chagenPassword
+import com.example.pizzapp.models.resetPassword
+import com.example.pizzapp.models.response
+import com.example.pizzapp.models.verifyCode
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -10,6 +14,10 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 import javax.net.ssl.TrustManager
 import okhttp3.OkHttpClient
+import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.PATCH
+import retrofit2.http.Path
 import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.SSLContext
 import javax.net.ssl.X509TrustManager
@@ -21,6 +29,27 @@ interface ApiService {
 
     @POST("User/loginUser")
     fun login(@Body credenciales: CredentialsLogin): Call<TokenResponse>
+
+    @POST("/v1/User/request-password-reset")
+    fun sendEmailPassword(@Body resetPassword: resetPassword): Call<response>
+
+
+    @POST("/v1/User/verify-code")
+    fun verifyCode(@Body verifyCode: verifyCode): Call<response>
+
+    @PATCH("User/updateUser")
+    fun updateUser(@Header("Authorization") token: String, @Body userEntity: User): Call<User>
+
+
+    @PATCH("/v1/User/updatePassword/{email}")
+    fun changePassword(@Path("email") email: String, @Body chagenPassword: chagenPassword): Call<User>
+
+    @GET("/v1/User/deleteUser")
+    fun desactiveUser(@Header("Authorization") token: String): Call<User>
+
+    @GET("/v1/User/activeUser/{email}")
+    fun activeUser(@Path("email") email: String): Call<User>
+
 }
 
 object RetrofitClient {

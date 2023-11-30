@@ -64,25 +64,22 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import java.io.File
 import java.util.concurrent.Executor
+import com.example.pizzapp.decodeJWT
 
 
 @Composable
-fun MyProfileScreen(navController: NavController) {
+fun MyProfileScreen(navController: NavController, jwtToken: String) {
     var isCameraOpen by remember { mutableStateOf(false) } // Asume que el token JWT es pasado como argumento
     val context = LocalContext.current
-//    val userData = decodeJWT(jwtToken) // Decodifica la información del usuario desde el token JWT
-//      Variables para almacenar los datos del usuario
-//    var email by remember { mutableStateOf(userData?.get("email") as? String ?: "") }
-//    var isValidEmail by remember { mutableStateOf(false) }
-//    var nombreUsuario by remember { mutableStateOf(userData?.get("nombreUsuario") as? String ?: "") }
-//    var isValidPassword by remember { mutableStateOf(false) }
-//    var nombre by remember { mutableStateOf(userData?.get("nombre") as? String ?: "") }
-//    var apellido by remember { mutableStateOf(userData?.get("apellido") as? String ?: "") }
+    val userData = decodeJWT(jwtToken) // Decodifica la información del usuario desde el token JWT
 
-    var email = "laurita@gmail.com"
-    var nombre = "laura"
-    var apellido = "jaimes"
-    var nombreUsuario = "laurita123"
+    // Variables para almacenar los datos del usuario
+    var email by remember { mutableStateOf(userData?.get("email") as? String ?: "") }
+    var isValidEmail by remember { mutableStateOf(false) }
+    var nombreUsuario by remember { mutableStateOf(userData?.get("nombreUsuario") as? String ?: "") }
+    var isValidPassword by remember { mutableStateOf(false) }
+    var nombre by remember { mutableStateOf(userData?.get("nombre") as? String ?: "") }
+    var apellido by remember { mutableStateOf(userData?.get("apellido") as? String ?: "") }
 
     var photoUri by remember { mutableStateOf<Uri?>(null) }
 
@@ -144,46 +141,18 @@ fun MyProfileScreen(navController: NavController) {
                                     )
                                 }
                                 Spacer(modifier = Modifier.height(16.dp))
-//                                Text(
-//                                    text = "Nombre",
-//                                    fontSize = 13.sp,
-//                                    fontWeight = FontWeight.Bold,
-//                                    modifier = Modifier
-//                                        .align(Alignment.Start)
-//                                        .padding(8.dp)
-//                                )
+
                                 ActualizarTexto(nombre, onValueChange = { nombre = it }, "Nombre")
                                 Spacer(modifier = Modifier.height(16.dp))
-//                                Text(
-//                                    text = "Apellido",
-//                                    fontSize = 13.sp,
-//                                    fontWeight = FontWeight.Bold,
-//                                    modifier = Modifier
-//                                        .align(Alignment.Start)
-//                                        .padding(8.dp)
-//                                )
+
                                 ActualizarTexto(apellido, onValueChange = { apellido = it }, "Apellido")
                                 Spacer(modifier = Modifier.height(16.dp))
-//                                Text(
-//                                    text = "Nombre de usuario",
-//                                    fontSize = 13.sp,
-//                                    fontWeight = FontWeight.Bold,
-//                                    modifier = Modifier
-//                                        .align(Alignment.Start)
-//                                        .padding(8.dp)
-//                                )
+
                                 ActualizarTexto(
                                     nombreUsuario,
                                     onValueChange = { nombreUsuario = it }, "Nombre de usuario")
                                 Spacer(modifier = Modifier.height(16.dp))
-//                                Text(
-//                                    text = "Email",
-//                                    fontSize = 13.sp,
-//                                    fontWeight = FontWeight.Bold,
-//                                    modifier = Modifier
-//                                        .align(Alignment.Start)
-//                                        .padding(8.dp)
-//                                )
+
                                 ActualizarTexto(email, onValueChange = { email = it }, "Email")
 
                             }

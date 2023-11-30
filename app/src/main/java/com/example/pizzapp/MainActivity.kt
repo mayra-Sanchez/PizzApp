@@ -85,8 +85,13 @@ class MainActivity : ComponentActivity() {
                         composable("login") {
                             LoginScreen(navController = navController)
                         }
-                        composable("pagina_principal") {
-                            InitialScreen(navController = navController)
+                        composable("pagina_principal/{jwtToken}",
+                            arguments = listOf(navArgument("jwtToken") { type = NavType.StringType })
+                        ) { backStackEntry ->
+                            InitialScreen(
+                                navController = navController,
+                                jwtToken = backStackEntry.arguments?.getString("jwtToken") ?: ""
+                            )
                         }
                         composable("mi_perfil") {
                             MyProfileScreen(navController = navController)
@@ -121,9 +126,13 @@ class MainActivity : ComponentActivity() {
                         composable("forgot-password"){
                             ForgotPassword(navController = navController)
                         }
-                        composable("reset-password"){
-                            ResetPassword(navController = navController)
-                    }
+                        composable(
+                            "reset-password/{email}",
+                            arguments = listOf(navArgument("email") { type = NavType.StringType })
+                        ) { backStackEntry ->
+                            ResetPassword(navController = navController, email = backStackEntry.arguments?.getString("email") ?: "")
+                        }
+
                     }
                 }
             }

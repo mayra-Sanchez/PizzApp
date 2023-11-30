@@ -34,8 +34,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.NavHost
 import com.example.pizzapp.R
+import com.example.pizzapp.RetrofitClient
+import com.example.pizzapp.models.TokenResponse
+import com.example.pizzapp.models.resetPassword
+import com.example.pizzapp.models.response
+import org.json.JSONException
+import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Response
 
 @Composable
 fun ForgotPassword(navController: NavController){
@@ -134,15 +141,39 @@ fun sendCode(context: Context,
             colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
             modifier = Modifier.fillMaxWidth(),
             onClick = {
+                val resetPassword= resetPassword(emailP)
+                RetrofitClient.apiService.sendEmailPassword(resetPassword).enqueue(object: retrofit2.Callback<response> {
+                    override fun onResponse(call: Call<response>, response: Response<response>) { if (response.isSuccessful) {
+                            val responseBody = response.body()?.response
+                            if (responseBody != null) {
+                                Toast.makeText(context, responseBody, Toast.LENGTH_SHORT).show()
+                                navController.navigate("reset-password/$emailP")
 
-                if (isValidEmailP) {
-                    Toast.makeText(context, "Enviando código", Toast.LENGTH_SHORT).show()
-                    navController.navigate("reset-password")
+                            }
+                        }else{
+                            val errorBody = response.errorBody()?.string()
+                            if (errorBody != null) {
+                                try {
+                                    val errorJson = JSONObject(errorBody)
+                                    val errorMessage = errorJson.optString("response", "Ha ocurrido un error")
 
-                } else {
-                    Toast.makeText(context, "Correo no válido", Toast.LENGTH_SHORT).show()
-                }
+                                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                                } catch (e: JSONException) {
+                                    e.printStackTrace()
+                                }
+                            }
+                        }
+
+
+                    }
+
+                    override fun onFailure(call: Call<response>, t: Throwable) {
+                        Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_LONG).show()
+                    }
+                })
             }
+
+
         ) {
             Text(text = "Reestablecer contraseña")
         }

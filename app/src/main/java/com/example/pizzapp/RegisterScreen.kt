@@ -377,15 +377,14 @@ fun ButtonRegister(
         horizontalArrangement = Arrangement.Center
     ) {
         Button(
-            //... (misma configuración del botón)
-            onClick = {
-                if (isValidEmail && isValidPassword) {
-                    val nuevoUsuario = User(nombre, email, nombreUsuario, password, apellido)
+
+        onClick = {
+                if (isValidEmail && isValidPassword && isChecked) {
+                    val nuevoUsuario = User(nombre, apellido,email, nombreUsuario, password)
                     RetrofitClient.apiService.crearUsuario(nuevoUsuario).enqueue(object: retrofit2.Callback<TokenResponse> {
                         override fun onResponse(call: Call<TokenResponse>, response: Response<TokenResponse>) {
                             if (response.isSuccessful) {
                                 val token = response.body()?.token
-                                // Haz algo con el token, por ejemplo, guardarlo y navegar a otra pantalla
                                 Toast.makeText(context, "Usuario registrado con éxito", Toast.LENGTH_LONG).show()
                                 navController.navigate("login")
                             } else {
