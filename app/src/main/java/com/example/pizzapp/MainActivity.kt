@@ -93,17 +93,14 @@ class MainActivity : ComponentActivity() {
                                 jwtToken = backStackEntry.arguments?.getString("jwtToken") ?: ""
                             )
                         }
-                        composable("mi_perfil") {
-                            MyProfileScreen(navController = navController)
+                        composable( route = "mi_perfil/{jwtToken}",
+                            arguments = listOf(navArgument("jwtToken") { type = NavType.StringType })
+                        ) { backStackEntry ->
+                            MyProfileScreen(
+                                navController = navController,
+                                jwtToken = backStackEntry.arguments?.getString("jwtToken") ?: ""
+                            )
                         }
-//                        composable( route = "mi_perfil",
-//                            arguments = listOf(navArgument("jwtToken") { type = NavType.StringType })
-//                        ) { backStackEntry ->
-//                            MyProfileScreen(
-//                                navController = navController
-////                                jwtToken = backStackEntry.arguments?.getString("jwtToken") ?: ""
-//                            )
-//                        }
                         composable("mis_reseñas") {
                             MyReview(navController = navController)
                         }
