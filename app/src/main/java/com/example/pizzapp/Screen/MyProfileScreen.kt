@@ -43,26 +43,37 @@ import com.example.pizzapp.R
 import com.example.pizzapp.decodeJWT
 import com.example.pizzapp.navbar.Navbar
 import android.Manifest
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.os.Build
+import android.util.Log
 import android.view.ViewGroup
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.isGranted
-import com.google.gson.Gson
 import java.io.File
 import java.util.concurrent.Executor
+
 
 
 @Composable
@@ -70,20 +81,25 @@ fun MyProfileScreen(navController: NavController) {
     var isCameraOpen by remember { mutableStateOf(false) } // Asume que el token JWT es pasado como argumento
     val context = LocalContext.current
 //    val userData = decodeJWT(jwtToken) // Decodifica la información del usuario desde el token JWT
-//
-//    // Variables para almacenar los datos del usuario
+//      Variables para almacenar los datos del usuario
 //    var email by remember { mutableStateOf(userData?.get("email") as? String ?: "") }
 //    var isValidEmail by remember { mutableStateOf(false) }
 //    var nombreUsuario by remember { mutableStateOf(userData?.get("nombreUsuario") as? String ?: "") }
 //    var isValidPassword by remember { mutableStateOf(false) }
 //    var nombre by remember { mutableStateOf(userData?.get("nombre") as? String ?: "") }
 //    var apellido by remember { mutableStateOf(userData?.get("apellido") as? String ?: "") }
-     var email = "laurita@gmail.com"
+    var email = "laurita@gmail.com"
     var nombre = "laura"
     var apellido = "jaimes"
     var nombreUsuario = "laurita123"
 
     var photoUri by remember { mutableStateOf<Uri?>(null) }
+
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let { photoUri = it }
+    }
 
     Column(
         modifier = Modifier
@@ -109,7 +125,6 @@ fun MyProfileScreen(navController: NavController) {
                         .padding(16.dp)
                         .align(Alignment.CenterHorizontally)
                 )
-
                 LazyColumn(
                     modifier = Modifier
                         .weight(1f) // Esto asigna un peso de 1 a LazyColumn
@@ -123,54 +138,56 @@ fun MyProfileScreen(navController: NavController) {
                         ) {
                             Column(
                                 modifier = Modifier
-                                    .fillMaxWidth()
+                                    .fillMaxWidth().padding(10.dp)
                             ) {
                                 ProfileImage(
                                     imageUri = photoUri,
-                                    onImageSelected = { selectedImageUri ->
-                                        photoUri = selectedImageUri
+                                    onImageSelected = { galleryLauncher.launch("image/*")
                                     },
                                     onCameraSelected = { isCameraOpen = true } // Maneja la selección de cámara
                                 )
-                                Text(
-                                    text = "Nombre",
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier
-                                        .align(Alignment.Start)
-                                        .padding(8.dp)
-                                )
-                                ActualizarTexto(nombre, onValueChange = { nombre = it })
-                                Text(
-                                    text = "Apellido",
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier
-                                        .align(Alignment.Start)
-                                        .padding(8.dp)
-                                )
-                                ActualizarTexto(apellido, onValueChange = { apellido = it })
-                                Text(
-                                    text = "Nombre de usuario",
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier
-                                        .align(Alignment.Start)
-                                        .padding(8.dp)
-                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+//                                Text(
+//                                    text = "Nombre",
+//                                    fontSize = 13.sp,
+//                                    fontWeight = FontWeight.Bold,
+//                                    modifier = Modifier
+//                                        .align(Alignment.Start)
+//                                        .padding(8.dp)
+//                                )
+                                ActualizarTexto(nombre, onValueChange = { nombre = it }, "Nombre")
+                                Spacer(modifier = Modifier.height(16.dp))
+//                                Text(
+//                                    text = "Apellido",
+//                                    fontSize = 13.sp,
+//                                    fontWeight = FontWeight.Bold,
+//                                    modifier = Modifier
+//                                        .align(Alignment.Start)
+//                                        .padding(8.dp)
+//                                )
+                                ActualizarTexto(apellido, onValueChange = { apellido = it }, "Apellido")
+                                Spacer(modifier = Modifier.height(16.dp))
+//                                Text(
+//                                    text = "Nombre de usuario",
+//                                    fontSize = 13.sp,
+//                                    fontWeight = FontWeight.Bold,
+//                                    modifier = Modifier
+//                                        .align(Alignment.Start)
+//                                        .padding(8.dp)
+//                                )
                                 ActualizarTexto(
                                     nombreUsuario,
-                                    onValueChange = { nombreUsuario = it })
-                                Text(
-                                    text = "Email",
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier
-                                        .align(Alignment.Start)
-                                        .padding(8.dp)
-                                )
-                                ActualizarTexto(email, onValueChange = { email = it })
-
+                                    onValueChange = { nombreUsuario = it }, "Nombre de usuario")
+                                Spacer(modifier = Modifier.height(16.dp))
+//                                Text(
+//                                    text = "Email",
+//                                    fontSize = 13.sp,
+//                                    fontWeight = FontWeight.Bold,
+//                                    modifier = Modifier
+//                                        .align(Alignment.Start)
+//                                        .padding(8.dp)
+//                                )
+                                ActualizarTexto(email, onValueChange = { email = it }, "Email")
 
                             }
                         }
@@ -188,63 +205,63 @@ fun MyProfileScreen(navController: NavController) {
         }
     }
     if (isCameraOpen) {
-        HomeCamera()
+        HomeCamera(navController = navController)
     }
 }
 
 @Composable
 fun ProfileImage(
     imageUri: Uri?,
-    onImageSelected: (Uri) -> Unit,
-    onCameraSelected: () -> Unit // Agrega un callback para manejar la selección de cámara
+    onImageSelected: () -> Unit,
+    onCameraSelected: () -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
 
     val onImageOptionSelected: (ImageOption) -> Unit = { imageOption ->
         when (imageOption) {
             ImageOption.Camera -> {
-                // Al seleccionar la cámara, llama al callback para abrir la cámara en MyProfileScreen
                 onCameraSelected()
                 showDialog = false
             }
             ImageOption.Gallery -> {
-                // Lógica para abrir la galería y seleccionar una imagen
-                // ...
-                // val selectedImageUri = Obtener la URI de la imagen seleccionada desde la galería
-                // onImageSelected(selectedImageUri)
+                onImageSelected()
                 showDialog = false
             }
         }
         showDialog = false
     }
-
-    Box(
-        modifier = Modifier
-            .size(120.dp)
-            .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.primary)
-            .clickable {
-                showDialog = true
-            }
-    ) {
-        if (showDialog) {
+    Box(modifier = Modifier
+        .size(120.dp)
+        .clip(CircleShape)
+        .background(Color(255,255,255))
+        .clickable { showDialog = true },
+        contentAlignment = Alignment.Center
+    ){
+        imageUri?.let {
+            androidx.compose.foundation.Image(
+                painter = rememberImagePainter(it),
+                contentDescription = "Imagen de perfil",
+                modifier = Modifier
+                    .size(120.dp)
+                    .clip(CircleShape))
+        }
+        if(showDialog){
             ImageSelectionDialog(onImageOptionSelected)
         }
     }
 }
-// Enum para representar las opciones de imagen (cámara o galería)
+
 enum class ImageOption {
     Camera,
     Gallery
 }
 
-// Diálogo para seleccionar entre cámara o galería
 @Composable
 fun ImageSelectionDialog(
-    onImageOptionSelected: (ImageOption) -> Unit
+    onImageOptionSelected: (ImageOption) -> Unit,
 ) {
     AlertDialog(
-        onDismissRequest = { /* No hacer nada al cerrar el diálogo */ },
+        onDismissRequest = { },
         title = { Text(text = "Seleccionar imagen") },
         text = {
             Column {
@@ -273,26 +290,33 @@ fun ImageSelectionDialog(
         dismissButton = {}
     )
 }
+
+//TODO LO DE CAMARA ---------------------------------------------------------------------------------------
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun HomeCamera() {
+fun HomeCamera(navController: NavController) {
     val permissionState = rememberPermissionState(permission = Manifest.permission.CAMERA)
-
     val context = LocalContext.current
     val cameraController = remember {
         LifecycleCameraController(context)
     }
     val lifecycle = LocalLifecycleOwner.current
-
     LaunchedEffect(Unit) {
         permissionState.launchPermissionRequest()
     }
     Scaffold(modifier = Modifier.fillMaxSize(), floatingActionButton = {
         FloatingActionButton(onClick = {
             val executor = ContextCompat.getMainExecutor(context)
-            takePicture(cameraController, executor, context)
+            takePicture(
+                cameraController,
+                executor,
+                context,
+                navController,
+                updateProfileImage = { uri ->
+                    updateProfileImageAndNavigate(uri, navController)
+                })
         }) {
-            Text(text = "Camara!")
+            Text(text = "Tomar foto")
         }
     }) {
         if (permissionState.status.isGranted) {
@@ -302,11 +326,17 @@ fun HomeCamera() {
         }
     }
 }
+fun updateProfileImageAndNavigate(uri: Uri, navController: NavController) {
+    Log.d("CameraDEMO", "updateProfileImageAndNavigate: uri = $uri")
+    navController.navigate("mi_perfil")
+}
 
 private fun takePicture(
     cameraController: LifecycleCameraController,
     executor: Executor,
-    context: Context
+    context: Context,
+    navController: NavController,
+    updateProfileImage: (Uri) -> Unit
 ) {
     val outputDirectory = File(context.filesDir, "imagenes_tomadas") // Directorio para guardar las imágenes
     outputDirectory.mkdirs() // Crea el directorio si no existe
@@ -320,13 +350,16 @@ private fun takePicture(
         executor,
         object : ImageCapture.OnImageSavedCallback {
             override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                println(outputFileResults.savedUri)
-                Toast.makeText(context, "Imagen guardada", Toast.LENGTH_LONG).show()
+                outputFileResults.savedUri?.let { uri ->
+                    Log.d("CameraDemo", "Imagen guardada: uri = $uri")
+                    Toast.makeText(context, "Imagen guardada", Toast.LENGTH_LONG).show()
+                    updateProfileImage(uri)
+                }
             }
-
             override fun onError(exception: ImageCaptureException) {
-                println("Error al guardar la imagen: ${exception.message}")
-                Toast.makeText(context, "Error al guardar la imagen", Toast.LENGTH_LONG).show()
+                // Manejar el error
+                val msg = "Error al guardar la imagen: ${exception.message}"
+                Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
             }
         }
     )
@@ -350,8 +383,7 @@ fun CamaraComposable(
 
         previewView })
 }
-
-
+//-----------------------------------------------------------------------------------------------------------------------------------
 @Composable
 fun ButtonUpdate(
     context: Context,
@@ -361,7 +393,6 @@ fun ButtonUpdate(
     nombreUsuario: String,
     navController: NavController
 ){
-
     Row(
         Modifier
             .fillMaxWidth()
@@ -380,18 +411,27 @@ fun ButtonUpdate(
     }
 }
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ActualizarTexto(
     value: String,
-    onValueChange: (String) -> Unit
+    onValueChange: (String) -> Unit,
+    label: String
 ) {
-    TextField(
+    OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
+        shape = RoundedCornerShape(10.dp),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+        label = { Text(label) },
+        singleLine = true,
+        maxLines = 1,
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxWidth().background(Color.White, RoundedCornerShape(5.dp))
             .padding(8.dp)
-            .background(Color.White) // Añade este modificador
     )
 }
+
+
+

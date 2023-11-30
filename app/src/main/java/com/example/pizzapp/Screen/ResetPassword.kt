@@ -140,14 +140,13 @@ fun NewPassword(
     passwordVisible: Boolean,
     passwordVisibleChange: () -> Unit,
     isValidPassword: Boolean
-
 ){
     Row(
         Modifier
             .fillMaxWidth()
             .padding(5.dp),
         horizontalArrangement = Arrangement.Center
-    ) {
+    ){
         OutlinedTextField(
             visualTransformation = if(passwordVisible) {
                 VisualTransformation.None
