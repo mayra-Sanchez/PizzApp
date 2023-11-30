@@ -30,21 +30,21 @@ interface ApiService {
     @POST("User/loginUser")
     fun login(@Body credenciales: CredentialsLogin): Call<TokenResponse>
 
-    @POST("/v1/User/request-password-reset")
+    @POST("User/request-password-reset")
     fun sendEmailPassword(@Body resetPassword: resetPassword): Call<response>
 
 
-    @POST("/v1/User/verify-code")
+    @POST("User/verify-code")
     fun verifyCode(@Body verifyCode: verifyCode): Call<response>
 
     @PATCH("User/updateUser")
     fun updateUser(@Header("Authorization") token: String, @Body userEntity: User): Call<User>
 
 
-    @PATCH("/v1/User/updatePassword/{email}")
+    @PATCH("User/updatePassword/{email}")
     fun changePassword(@Path("email") email: String, @Body chagenPassword: chagenPassword): Call<User>
 
-    @GET("/v1/User/deleteUser")
+    @GET("User/deleteUser")
     fun desactiveUser(@Header("Authorization") token: String): Call<User>
 
     @GET("/v1/User/activeUser/{email}")
