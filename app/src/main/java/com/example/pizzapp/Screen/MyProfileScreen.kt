@@ -68,12 +68,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.isGranted
 import java.io.File
 import java.util.concurrent.Executor
-
 
 
 @Composable
@@ -88,6 +88,7 @@ fun MyProfileScreen(navController: NavController) {
 //    var isValidPassword by remember { mutableStateOf(false) }
 //    var nombre by remember { mutableStateOf(userData?.get("nombre") as? String ?: "") }
 //    var apellido by remember { mutableStateOf(userData?.get("apellido") as? String ?: "") }
+
     var email = "laurita@gmail.com"
     var nombre = "laura"
     var apellido = "jaimes"

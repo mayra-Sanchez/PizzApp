@@ -48,7 +48,7 @@ fun ResetPassword(navController: NavController){
     var password2 by remember { mutableStateOf("") }
     var isValidPassword2 by remember { mutableStateOf(false) }
 
-    var code by remember { mutableStateOf(" ") }
+    var code by remember { mutableStateOf("") }
     var isValidCode by remember { mutableStateOf(false) }
 
     var newCode by remember {
