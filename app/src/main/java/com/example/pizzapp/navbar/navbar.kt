@@ -1,6 +1,7 @@
 package com.example.pizzapp.navbar
 
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -35,16 +36,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.pizzapp.R
+import com.example.pizzapp.RetrofitClient
 import com.example.pizzapp.decodeJWT
+import com.example.pizzapp.models.TokenResponse
+import com.example.pizzapp.models.User
+import com.example.pizzapp.models.response
+import retrofit2.Call
+import retrofit2.Response
 
 
 @Composable
 fun Navbar(navController: NavController, jwtToken: String? = null) {
     // Decodificar la información del usuario desde el token JWT
+    var context = LocalContext.current;
     var isLogoutDialogOpen by remember { mutableStateOf(false) }
     var isLogoutDialogOpen2 by remember { mutableStateOf(false) }
     jwtToken?.let {
@@ -200,10 +209,30 @@ fun Navbar(navController: NavController, jwtToken: String? = null) {
             confirmButton = {
                 Button(
                     onClick = {
-                        //Acá se llamaria al servicio de eliminar cuenta
-                        navController.navigate("inicio")
-                        isLogoutDialogOpen2 = false
-                    },
+                        if(jwtToken!=null){
+                            RetrofitClient.apiService.desactiveUser("Bearer "+jwtToken).enqueue(object: retrofit2.Callback<User> {
+                                override fun onResponse(call: Call<User>, response: Response<User>) {
+
+                                    if(response.isSuccessful){
+                                        Toast.makeText(context, "Cuenta eliminada", Toast.LENGTH_LONG).show()
+
+                                        navController.navigate("inicio")
+                                        isLogoutDialogOpen2 = false
+                                    }else{
+                                        Toast.makeText(context, "No se logró hacer el proceso", Toast.LENGTH_LONG).show()
+
+                                    }
+                                }
+
+                                override fun onFailure(call: Call<User>, t: Throwable) {
+                                    // Aquí manejas el caso de fallo en la llamada, como una excepción o problema de conexión
+                                    Toast.makeText(context, "Error de conexión: ${t.message}", Toast.LENGTH_LONG).show()
+                                }
+                                })
+                        }
+
+
+                              },
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
                 ) {
                     Text("Confirmar")
