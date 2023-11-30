@@ -1,28 +1,44 @@
 package com.example.pizzapp.Screen
 
+import android.Manifest
 import android.content.Context
 import android.net.Uri
+import android.util.Log
+import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCaptureException
+import androidx.camera.view.LifecycleCameraController
+import androidx.camera.view.PreviewView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,47 +47,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import coil.compose.rememberImagePainter
-import com.example.pizzapp.R
-import com.example.pizzapp.decodeJWT
-import com.example.pizzapp.navbar.Navbar
-import android.Manifest
-import android.graphics.Bitmap
-import android.graphics.ImageDecoder
-import android.os.Build
-import android.util.Log
-import android.view.ViewGroup
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.Preview
-import androidx.camera.view.LifecycleCameraController
-import androidx.camera.view.PreviewView
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 import java.io.File
 import java.util.concurrent.Executor
 
@@ -141,12 +128,18 @@ fun MyProfileScreen(navController: NavController) {
                                 modifier = Modifier
                                     .fillMaxWidth().padding(10.dp)
                             ) {
-                                ProfileImage(
-                                    imageUri = photoUri,
-                                    onImageSelected = { galleryLauncher.launch("image/*")
-                                    },
-                                    onCameraSelected = { isCameraOpen = true } // Maneja la selección de cámara
-                                )
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(16.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    ProfileImage(
+                                        imageUri = photoUri,
+                                        onImageSelected = { galleryLauncher.launch("image/*") },
+                                        onCameraSelected = { isCameraOpen = true }
+                                    )
+                                }
                                 Spacer(modifier = Modifier.height(16.dp))
 //                                Text(
 //                                    text = "Nombre",
@@ -206,7 +199,10 @@ fun MyProfileScreen(navController: NavController) {
         }
     }
     if (isCameraOpen) {
-        HomeCamera(navController = navController)
+        HomeCamera(navController = navController) { uri ->
+            photoUri = uri
+            isCameraOpen = false
+        }
     }
 }
 
@@ -219,38 +215,45 @@ fun ProfileImage(
     var showDialog by remember { mutableStateOf(false) }
 
     val onImageOptionSelected: (ImageOption) -> Unit = { imageOption ->
-        when (imageOption) {
+        showDialog = when (imageOption) {
             ImageOption.Camera -> {
                 onCameraSelected()
-                showDialog = false
+                false
             }
+
             ImageOption.Gallery -> {
                 onImageSelected()
-                showDialog = false
+                false
             }
         }
         showDialog = false
     }
-    Box(modifier = Modifier
-        .size(120.dp)
-        .clip(CircleShape)
-        .background(Color(255,255,255))
-        .clickable { showDialog = true },
+
+    Box(
+        modifier = Modifier
+            .size(120.dp)
+            .clip(CircleShape)
+            .background(Color(255, 255, 255))
+            .clickable { showDialog = true },
         contentAlignment = Alignment.Center
-    ){
+    ) {
         imageUri?.let {
             androidx.compose.foundation.Image(
                 painter = rememberImagePainter(it),
                 contentDescription = "Imagen de perfil",
                 modifier = Modifier
                     .size(120.dp)
-                    .clip(CircleShape))
+                    .clip(CircleShape)
+                    .aspectRatio(1f)
+                    .align(Alignment.Center)
+            )
         }
-        if(showDialog){
+        if (showDialog) {
             ImageSelectionDialog(onImageOptionSelected)
         }
     }
 }
+
 
 enum class ImageOption {
     Camera,
@@ -275,13 +278,15 @@ fun ImageSelectionDialog(
                     onClick = { onImageOptionSelected(ImageOption.Camera) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 8.dp)
+                        .padding(bottom = 8.dp),
+                    colors = ButtonDefaults.buttonColors(Color(236, 83, 76))
                 ) {
                     Text(text = "Cámara")
                 }
                 Button(
                     onClick = { onImageOptionSelected(ImageOption.Gallery) },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(Color(236, 83, 76))
                 ) {
                     Text(text = "Galería")
                 }
@@ -295,7 +300,7 @@ fun ImageSelectionDialog(
 //TODO LO DE CAMARA ---------------------------------------------------------------------------------------
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun HomeCamera(navController: NavController) {
+fun HomeCamera(navController: NavController, updateProfileImage: (Uri) -> Unit) {
     val permissionState = rememberPermissionState(permission = Manifest.permission.CAMERA)
     val context = LocalContext.current
     val cameraController = remember {
@@ -313,9 +318,8 @@ fun HomeCamera(navController: NavController) {
                 executor,
                 context,
                 navController,
-                updateProfileImage = { uri ->
-                    updateProfileImageAndNavigate(uri, navController)
-                })
+                updateProfileImage = updateProfileImage
+            )
         }) {
             Text(text = "Tomar foto")
         }
@@ -327,8 +331,9 @@ fun HomeCamera(navController: NavController) {
         }
     }
 }
-fun updateProfileImageAndNavigate(uri: Uri, navController: NavController) {
+fun updateProfileImageAndNavigate(uri: Uri, navController: NavController, onImageUpdated: (Uri) -> Unit) {
     Log.d("CameraDEMO", "updateProfileImageAndNavigate: uri = $uri")
+    onImageUpdated(uri)
     navController.navigate("mi_perfil")
 }
 
@@ -429,7 +434,7 @@ fun ActualizarTexto(
         singleLine = true,
         maxLines = 1,
         modifier = Modifier
-            .fillMaxWidth().background(Color.White, RoundedCornerShape(5.dp))
+            .fillMaxWidth()
             .padding(8.dp)
     )
 }
