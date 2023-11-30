@@ -50,7 +50,7 @@ fun MyProfileScreen(navController: NavController,jwtToken: String) { // Asume qu
             .fillMaxSize()
             .background(Color(144, 167, 76))
     ) {
-        Navbar(navController)
+        Navbar(navController,jwtToken)
         Column(
             modifier = Modifier
                 .align(Alignment.Center)

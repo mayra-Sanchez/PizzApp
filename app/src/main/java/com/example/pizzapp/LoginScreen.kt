@@ -44,6 +44,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.pizzapp.models.CredentialsLogin
 import com.example.pizzapp.models.TokenResponse
+import org.json.JSONException
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -308,11 +310,10 @@ fun Button_login(
             onClick = {
                 if (isValidEmail && isValidPassword) {
                     login(context, email, password) { token ->
-                        navController.navigate("mi_perfil/${token}")
+                        navController.navigate("pagina_principal/${token}")
                     }
                 } else {
                     Toast.makeText(context, "Verifica los campos", Toast.LENGTH_SHORT).show()
-                    navController.navigate("pagina_principal")
                 }
             }
         ) {
@@ -332,7 +333,17 @@ fun login(context: Context, email: String, password: String, onSuccess:(String)-
                 onSuccess(token)
                 
             } else {
-                Toast.makeText(context, "Error al iniciar sesión", Toast.LENGTH_LONG).show()
+                val errorBody = response.errorBody()?.string()
+                if (errorBody != null) {
+                    try {
+                        // Intenta analizar el cuerpo de la respuesta de error como JSON
+                        val errorJson = JSONObject(errorBody)
+                        val errorMessage = errorJson.optString("response", "Ha ocurrido un error'")
+                        Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                    }
+                }
             }
         }
 

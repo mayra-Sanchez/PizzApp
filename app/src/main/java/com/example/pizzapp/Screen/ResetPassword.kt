@@ -37,18 +37,29 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.pizzapp.R
+import com.example.pizzapp.RetrofitClient
+import com.example.pizzapp.models.TokenResponse
+import com.example.pizzapp.models.User
+import com.example.pizzapp.models.chagenPassword
+import com.example.pizzapp.models.response
+import com.example.pizzapp.models.verifyCode
 import kotlinx.coroutines.delay
+import org.json.JSONException
+import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 @Composable
-fun ResetPassword(navController: NavController){
+fun ResetPassword(navController: NavController,email:String){
 
     val context = LocalContext.current
 
     var password2 by remember { mutableStateOf("") }
     var isValidPassword2 by remember { mutableStateOf(false) }
 
-    var code by remember { mutableStateOf(" ") }
+    var code by remember { mutableStateOf("") }
     var isValidCode by remember { mutableStateOf(false) }
 
     var newCode by remember {
@@ -114,7 +125,9 @@ fun ResetPassword(navController: NavController){
                         context = context,
                         isValidPassword = isValidPassword2,
                         password2 = password2,
-                        navController = navController
+                        navController = navController,
+                        email = email,
+                        code = code
                     )
                     sendCodeAgain(navController = navController, isButtonEnabled = isButtonEnabled,
                         onSendCodeClicked = {
@@ -231,7 +244,9 @@ fun updatePassword(
     context: Context,
     isValidPassword: Boolean,
     password2: String,
-    navController: NavController
+    navController: NavController,
+    email: String,
+    code: String
     ){
     Row(horizontalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxWidth(),
@@ -241,13 +256,62 @@ fun updatePassword(
             modifier = Modifier.fillMaxWidth(),
             enabled = isButtonPasswordEnabled,
             onClick = {
-                if (isValidPassword) {
-                    Toast.makeText(context, "Contraseña actualizada", Toast.LENGTH_SHORT).show()
-                    navController.navigate("login")
+                val verifyCode= verifyCode(email, code )
+                RetrofitClient.apiService.verifyCode(verifyCode).enqueue(object :
+                    Callback<response> {
+                    override fun onResponse(call: Call<response>, response: Response<response>) {
+                        if (response.isSuccessful) {
+                            val password= chagenPassword(password2 )
+                            RetrofitClient.apiService.changePassword(email,password).enqueue(object :
+                                Callback<User> {
+                                override fun onResponse(call: Call<User>, response: Response<User>) {
+                                    if (response.isSuccessful) {
+                                        Toast.makeText(context, "Contraseña actualizada", Toast.LENGTH_SHORT).show()
+                                        navController.navigate("login")
 
-                } else {
-                    Toast.makeText(context, "No se pudo actualizar la contraseña", Toast.LENGTH_SHORT).show()
-                }
+                                    } else {
+                                        val errorBody = response.errorBody()?.string()
+                                        if (errorBody != null) {
+                                            try {
+                                                // Intenta analizar el cuerpo de la respuesta de error como JSON
+                                                val errorJson = JSONObject(errorBody)
+                                                val errorMessage = errorJson.optString("response", "Ha ocurrido un error'")
+                                                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                                            } catch (e: JSONException) {
+                                                e.printStackTrace()
+                                            }
+                                        }
+                                    }
+                                }
+
+                                override fun onFailure(call: Call<User>, t: Throwable) {
+                                    // Aquí manejas el caso de fallo en la llamada, como una excepción o problema de conexión
+                                    println(t.message)
+                                    Toast.makeText(context, "${t.message}", Toast.LENGTH_LONG).show()
+                                }
+                            })
+
+
+                        } else {
+                            val errorBody = response.errorBody()?.string()
+                            if (errorBody != null) {
+                                try {
+                                    val errorJson = JSONObject(errorBody)
+                                    val errorMessage = errorJson.optString("response", "Ha ocurrido un error'")
+                                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                                } catch (e: JSONException) {
+                                    e.printStackTrace()
+                                }
+                            }                        }
+                    }
+
+                    override fun onFailure(call: Call<response>, t: Throwable) {
+                        // Aquí manejas el caso de fallo en la llamada, como una excepción o problema de conexión
+                        println(t.message)
+                        Toast.makeText(context, "${t.message}", Toast.LENGTH_LONG).show()
+                    }
+                })
+
             }
         ) {
             Text(text = "Cambiar contraseña")

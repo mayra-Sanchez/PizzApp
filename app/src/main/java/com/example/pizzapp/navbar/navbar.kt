@@ -38,10 +38,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.pizzapp.FirestoreRepository
 import com.example.pizzapp.R
 import com.example.pizzapp.decodeJWT
-import com.example.pizzapp.models.User
 
 
 @Composable
@@ -121,7 +119,7 @@ fun Navbar(navController: NavController, jwtToken: String? = null) {
                                     tint = Color.Black
                                 )
                             },
-                            onClick = { navController.navigate("mi_perfil") })
+                            onClick = { navController.navigate("mi_perfil/${jwtToken}") })
                         DropdownMenuItem(
                             text = { Text(text = "Mis reseñas") },
                             leadingIcon = {
