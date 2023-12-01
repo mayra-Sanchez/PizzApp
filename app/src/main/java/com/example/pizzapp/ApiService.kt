@@ -3,9 +3,11 @@ package com.example.pizzapp
 import com.example.pizzapp.models.CredentialsLogin
 import com.example.pizzapp.models.TokenResponse
 import com.example.pizzapp.models.User
+import com.example.pizzapp.models.UserUpdate
 import com.example.pizzapp.models.chagenPassword
 import com.example.pizzapp.models.resetPassword
 import com.example.pizzapp.models.response
+import com.example.pizzapp.models.saveImage
 import com.example.pizzapp.models.verifyCode
 import retrofit2.Call
 import retrofit2.Retrofit
@@ -40,6 +42,9 @@ interface ApiService {
     @PATCH("User/updateUser")
     fun updateUser(@Header("Authorization") token: String, @Body userEntity: User): Call<User>
 
+    @PATCH("User/updateUser")
+    fun updateImage(@Header("Authorization") token: String, @Body userEntity: saveImage): Call<User>
+
 
     @PATCH("User/updatePassword/{email}")
     fun changePassword(@Path("email") email: String, @Body chagenPassword: chagenPassword): Call<User>
@@ -49,6 +54,10 @@ interface ApiService {
 
     @GET("/v1/User/activeUser/{email}")
     fun activeUser(@Path("email") email: String): Call<User>
+
+
+    @GET("User/getUser")
+    fun getUser(@Header("Authorization") token: String): Call<UserUpdate>
 
 }
 

@@ -6,7 +6,7 @@ data class User(
     var email: String? = null,
     var nombreUsuario: String? = null,
     var password: String? = null,
-    var photoUrl: String? = null // Agrega la propiedad photoUrl
+    var profilePicture: String? = null // Agrega la propiedad photoUrl
 )
 
 data class Pizzerias(
@@ -37,3 +37,17 @@ data class verifyCode(
 data class chagenPassword(
     var password: String?=null
 )
+
+data class saveImage(
+    var profilePicture: ByteArray
+)
+
+
+data class UserUpdate(
+    var nombre: String? = null,
+    var apellido: String? = null,
+    var email: String? = null,
+    var nombreUsuario: String? = null,
+    var profilePicture: String? = null // Agrega la propiedad photoUrl
+)
+

@@ -2,7 +2,10 @@ package com.example.pizzapp.Screen
 
 import android.Manifest
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
+import android.util.Base64
 import android.util.Log
 import android.view.ViewGroup
 import android.widget.Toast
@@ -47,6 +50,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
@@ -55,9 +59,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
+import com.example.pizzapp.ImageRepository
+import com.example.pizzapp.RetrofitClient
+import com.example.pizzapp.UserViewModel
 import com.example.pizzapp.navbar.Navbar
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -65,28 +73,52 @@ import com.google.accompanist.permissions.rememberPermissionState
 import java.io.File
 import java.util.concurrent.Executor
 import com.example.pizzapp.decodeJWT
+import com.example.pizzapp.models.TokenResponse
+import com.example.pizzapp.models.User
+import com.example.pizzapp.models.UserUpdate
+import com.example.pizzapp.models.saveImage
+import com.google.gson.Gson
+import org.json.JSONException
+import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.io.FileOutputStream
+import java.io.IOException
 
 
 @Composable
-fun MyProfileScreen(navController: NavController, jwtToken: String) {
+fun MyProfileScreen(navController: NavController, jwtToken: String, userUpdateJson: String) {
+    val userUpdate = Gson().fromJson(userUpdateJson, UserUpdate::class.java) // Deserializar el JSON
+
     var isCameraOpen by remember { mutableStateOf(false) } // Asume que el token JWT es pasado como argumento
     val context = LocalContext.current
     val userData = decodeJWT(jwtToken) // Decodifica la información del usuario desde el token JWT
-
-    // Variables para almacenar los datos del usuario
-    var email by remember { mutableStateOf(userData?.get("email") as? String ?: "") }
-    var isValidEmail by remember { mutableStateOf(false) }
-    var nombreUsuario by remember { mutableStateOf(userData?.get("nombreUsuario") as? String ?: "") }
-    var isValidPassword by remember { mutableStateOf(false) }
-    var nombre by remember { mutableStateOf(userData?.get("nombre") as? String ?: "") }
-    var apellido by remember { mutableStateOf(userData?.get("apellido") as? String ?: "") }
+    var email by remember { mutableStateOf(userUpdate.email ?: "") }
+    var nombreUsuario by remember { mutableStateOf(userUpdate.nombreUsuario ?: "") }
+    var nombre by remember { mutableStateOf(userUpdate.nombre ?: "") }
+    var apellido by remember { mutableStateOf(userUpdate.apellido ?: "") }
 
     var photoUri by remember { mutableStateOf<Uri?>(null) }
+    var photoBytes by remember { mutableStateOf<String?>(null) }
+
+    // Manejar la imagen de perfil
+    val profilePictureBytes = ImageRepository.getImage(email)
+    if (profilePictureBytes != null) {
+        photoBytes = profilePictureBytes
+    } else {
+        photoUri = profilePictureBytes?.let { byteArrayToTempUri(context, it) }
+    }
+
+
+    // Variables para almacenar los datos del usuario
 
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
-        uri?.let { photoUri = it }
+        uri?.let { photoUri = it
+            cargarImagenDesdeUri(it, context,jwtToken) // Llamada a la función de carga
+        }
     }
 
     Column(
@@ -137,8 +169,11 @@ fun MyProfileScreen(navController: NavController, jwtToken: String) {
                                     ProfileImage(
                                         imageUri = photoUri,
                                         onImageSelected = { galleryLauncher.launch("image/*") },
-                                        onCameraSelected = { isCameraOpen = true }
-                                    )
+                                        onCameraSelected = { isCameraOpen = true },
+                                        imageByte = photoBytes
+                                        )
+
+
                                 }
                                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -165,7 +200,8 @@ fun MyProfileScreen(navController: NavController, jwtToken: String) {
                     nombre = nombre,
                     apellido = apellido,
                     nombreUsuario = nombreUsuario,
-                    navController = navController
+                    navController = navController,
+                    jwtToken= jwtToken
                 )
             }
         }
@@ -173,32 +209,48 @@ fun MyProfileScreen(navController: NavController, jwtToken: String) {
     if (isCameraOpen) {
         HomeCamera(navController = navController) { uri ->
             photoUri = uri
+            cargarImagenDesdeUri(uri, context,jwtToken) // Llamada a la función de carga
+
             isCameraOpen = false
         }
     }
 }
 
+fun byteArrayToTempUri(context: Context, byteArray: ByteArray): Uri? {
+    return try {
+        // Crear un archivo temporal
+        val tempFile = File.createTempFile("profile_picture", null, context.cacheDir).apply {
+            deleteOnExit()
+        }
+        FileOutputStream(tempFile).use { fos ->
+            fos.write(byteArray)
+        }
+
+        // Obtener la Uri del archivo temporal
+        FileProvider.getUriForFile(context, "${context.packageName}.provider", tempFile)
+    } catch (e: IOException) {
+        e.printStackTrace()
+        null
+    }
+}
+
+
 @Composable
 fun ProfileImage(
     imageUri: Uri?,
     onImageSelected: () -> Unit,
-    onCameraSelected: () -> Unit
+    onCameraSelected: () -> Unit,
+    imageByte: String?
 ) {
+    var context= LocalContext.current;
     var showDialog by remember { mutableStateOf(false) }
 
     val onImageOptionSelected: (ImageOption) -> Unit = { imageOption ->
-        showDialog = when (imageOption) {
-            ImageOption.Camera -> {
-                onCameraSelected()
-                false
-            }
-
-            ImageOption.Gallery -> {
-                onImageSelected()
-                false
-            }
-        }
         showDialog = false
+        when (imageOption) {
+            ImageOption.Camera -> onCameraSelected()
+            ImageOption.Gallery -> onImageSelected()
+        }
     }
 
     Box(
@@ -209,19 +261,33 @@ fun ProfileImage(
             .clickable { showDialog = true },
         contentAlignment = Alignment.Center
     ) {
-        imageUri?.let {
-            androidx.compose.foundation.Image(
-                painter = rememberImagePainter(it),
-                contentDescription = "Imagen de perfil",
-                modifier = Modifier
-                    .size(120.dp)
-                    .clip(CircleShape)
-                    .aspectRatio(1f)
-                    .align(Alignment.Center)
-            )
+        when {
+            // Si se dispone de un URI, carga la imagen desde el URI
+            imageUri != null -> {
+                androidx.compose.foundation.Image(
+                    painter = rememberImagePainter(imageUri),
+                    contentDescription = "Imagen de perfil",
+                    modifier = Modifier
+                        .size(120.dp)
+                        .clip(CircleShape)
+                )
+            }
+            // Si se dispone de bytes, convierte los bytes en Bitmap y luego muestra la imagen
+            imageByte != null -> {
+                val byteArray = Base64.decode(imageByte, Base64.DEFAULT)
+                val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+                androidx.compose.foundation.Image(
+                    bitmap = bitmap.asImageBitmap(),
+                    contentDescription = "Imagen de perfil",
+                    modifier = Modifier
+                        .size(120.dp)
+                        .clip(CircleShape)
+                )
+            }
         }
         if (showDialog) {
             ImageSelectionDialog(onImageOptionSelected)
+
         }
     }
 }
@@ -247,7 +313,9 @@ fun ImageSelectionDialog(
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
                 Button(
-                    onClick = { onImageOptionSelected(ImageOption.Camera) },
+                    onClick = { onImageOptionSelected(ImageOption.Camera)
+
+                              },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 8.dp),
@@ -309,6 +377,11 @@ fun updateProfileImageAndNavigate(uri: Uri, navController: NavController, onImag
     navController.navigate("mi_perfil")
 }
 
+fun obtenerBytesDesdeUri(context: Context, uri: Uri): ByteArray {
+    val inputStream = context.contentResolver.openInputStream(uri)
+    return inputStream?.readBytes() ?: byteArrayOf()
+}
+
 private fun takePicture(
     cameraController: LifecycleCameraController,
     executor: Executor,
@@ -331,6 +404,7 @@ private fun takePicture(
                 outputFileResults.savedUri?.let { uri ->
                     Log.d("CameraDemo", "Imagen guardada: uri = $uri")
                     Toast.makeText(context, "Imagen guardada", Toast.LENGTH_LONG).show()
+
                     updateProfileImage(uri)
                 }
             }
@@ -369,7 +443,8 @@ fun ButtonUpdate(
     nombre: String,
     apellido: String,
     nombreUsuario: String,
-    navController: NavController
+    navController: NavController,
+    jwtToken:String
 ){
     Row(
         Modifier
@@ -379,7 +454,39 @@ fun ButtonUpdate(
     ) {
         Button(
             onClick = {
+                val userUpdate= User(
+                    nombre,
+                    apellido,
+                    email,
+                    nombreUsuario)
+                RetrofitClient.apiService.updateUser("Bearer "+jwtToken,userUpdate).enqueue(object : Callback<User> {
+                    override fun onResponse(call: Call<User>, response: Response<User>) {
+                        if (response.isSuccessful) {
 
+                            Toast.makeText(context, "Actualización de datos con éxito", Toast.LENGTH_LONG).show()
+                            navController.navigate("pagina_principal/${jwtToken}")
+
+                        } else {
+                            // Manejo del caso en que la respuesta no es exitosa
+                            val errorBody = response.errorBody()?.string()
+                            if (errorBody != null) {
+                                try {
+                                    val errorJson = JSONObject(errorBody)
+                                    val errorMessage = errorJson.optString("response", "Ha ocurrido un error")
+                                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                                } catch (e: JSONException) {
+                                    e.printStackTrace()
+                                }
+                            }
+                        }
+                    }
+
+                    override fun onFailure(call: Call<User>, t: Throwable) {
+                        // Manejo del caso en que la llamada falla
+                        println(t.message)
+                        Toast.makeText(context, "Error de conexión: ${t.message}", Toast.LENGTH_LONG).show()
+                    }
+                })
             } ,
             colors = ButtonDefaults.buttonColors(Color(236, 83, 76))
         ) {
@@ -413,3 +520,35 @@ fun ActualizarTexto(
 
 
 
+fun cargarImagenDesdeUri(uri: Uri, context: Context, jwtToken: String) {
+    val imageBytes = obtenerBytesDesdeUri(context, uri)
+
+
+    val saveImage = saveImage(imageBytes)
+
+    RetrofitClient.apiService.updateImage("Bearer "+jwtToken,saveImage).enqueue(object : Callback<User> {
+        override fun onResponse(call: Call<User>, response: Response<User>) {
+            if (response.isSuccessful) {
+                Toast.makeText(context, "Imagen cargada con éxito", Toast.LENGTH_LONG).show()
+            } else {
+                // Manejo del caso en que la respuesta no es exitosa
+                val errorBody = response.errorBody()?.string()
+                if (errorBody != null) {
+                    try {
+                        val errorJson = JSONObject(errorBody)
+                        val errorMessage = errorJson.optString("response", "Ha ocurrido un error")
+                        Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+        }
+
+        override fun onFailure(call: Call<User>, t: Throwable) {
+            // Manejo del caso en que la llamada falla
+            println(t.message)
+            Toast.makeText(context, "Error de conexión: ${t.message}", Toast.LENGTH_LONG).show()
+        }
+    })
+}

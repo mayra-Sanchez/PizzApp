@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -27,6 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -44,6 +46,7 @@ import com.example.pizzapp.reviews.Reviews
 import com.example.pizzapp.Screen.ResetPassword
 import com.example.pizzapp.Screen.ForgotPassword
 import com.example.pizzapp.Screen.MyProfileScreen
+import com.example.pizzapp.models.UserUpdate
 import com.example.pizzapp.ui.theme.PizzAppTheme
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -55,6 +58,7 @@ class MainActivity : ComponentActivity() {
 
     private var navController: NavController? = null
 
+    private val userViewModel: UserViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate Called")
@@ -93,12 +97,15 @@ class MainActivity : ComponentActivity() {
                                 jwtToken = backStackEntry.arguments?.getString("jwtToken") ?: ""
                             )
                         }
-                        composable( route = "mi_perfil/{jwtToken}",
-                            arguments = listOf(navArgument("jwtToken") { type = NavType.StringType })
+                        composable( route = "mi_perfil/{jwtToken}/{userUpdateJson}",
+                            arguments = listOf(navArgument("jwtToken") { type = NavType.StringType },
+                                navArgument("userUpdateJson") { type = NavType.StringType }
+                            )
                         ) { backStackEntry ->
                             MyProfileScreen(
                                 navController = navController,
-                                jwtToken = backStackEntry.arguments?.getString("jwtToken") ?: ""
+                                jwtToken = backStackEntry.arguments?.getString("jwtToken") ?: "",
+                                userUpdateJson = backStackEntry.arguments?.getString("userUpdateJson") ?: ""
                             )
                         }
                         composable("mis_reseñas") {
@@ -171,6 +178,10 @@ class MainActivity : ComponentActivity() {
         super.onDestroy()
         Log.d(TAG, "onDestroy Called")
     }
+}
+
+class UserViewModel : ViewModel() {
+    var userUpdate: UserUpdate? = null
 }
 
 

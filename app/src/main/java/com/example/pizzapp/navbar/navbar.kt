@@ -40,13 +40,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.pizzapp.ImageRepository
 import com.example.pizzapp.R
 import com.example.pizzapp.RetrofitClient
 import com.example.pizzapp.decodeJWT
 import com.example.pizzapp.models.TokenResponse
 import com.example.pizzapp.models.User
+import com.example.pizzapp.models.UserUpdate
 import com.example.pizzapp.models.response
+import com.google.gson.Gson
+import org.json.JSONException
+import org.json.JSONObject
 import retrofit2.Call
+import retrofit2.Callback
 import retrofit2.Response
 
 
@@ -128,7 +134,67 @@ fun Navbar(navController: NavController, jwtToken: String? = null) {
                                     tint = Color.Black
                                 )
                             },
-                            onClick = { navController.navigate("mi_perfil/${jwtToken}") })
+                            onClick = {
+                                if (jwtToken != null) {
+                                    RetrofitClient.apiService.getUser("Bearer " + jwtToken)
+                                        .enqueue(object : Callback<UserUpdate> {
+                                            override fun onResponse(
+                                                call: Call<UserUpdate>,
+                                                response: Response<UserUpdate>
+                                            ) {
+                                                if (response.isSuccessful) {
+                                                    val userUpdate = response.body()
+                                                    if (userUpdate != null) {
+                                                        userUpdate.profilePicture?.let { it1 ->
+                                                            userUpdate.email?.let { it2 ->
+                                                                ImageRepository.saveImage(
+                                                                    it2,
+                                                                    it1
+                                                                )
+                                                            }
+                                                        }
+                                                        userUpdate.profilePicture=null
+                                                    };
+                                                    val userUpdateJson =
+                                                        Gson().toJson(userUpdate)
+                                                    navController.navigate("mi_perfil/$jwtToken/$userUpdateJson")
+
+                                                } else {
+                                                    val errorBody = response.errorBody()?.string()
+                                                    if (errorBody != null) {
+                                                        try {
+                                                            val errorJson = JSONObject(errorBody)
+                                                            val errorMessage = errorJson.optString(
+                                                                "response",
+                                                                "Ha ocurrido un error'"
+                                                            )
+                                                            Toast.makeText(
+                                                                context,
+                                                                errorMessage,
+                                                                Toast.LENGTH_SHORT
+                                                            ).show()
+                                                        } catch (e: JSONException) {
+                                                            e.printStackTrace()
+                                                        }
+                                                    }
+                                                }}
+                                                override fun onFailure(
+                                                    call: Call<UserUpdate>,
+                                                    t: Throwable
+                                                ) {
+                                                    // Aquí manejas el caso de fallo en la llamada, como una excepción o problema de conexión
+                                                    println(t.message)
+                                                    Toast.makeText(
+                                                        context,
+                                                        "Error de conexión: ${t.message}",
+                                                        Toast.LENGTH_LONG
+                                                    ).show()
+
+                                            }
+                                        })
+                                }
+                            })
+
                         DropdownMenuItem(
                             text = { Text(text = "Mis reseñas") },
                             leadingIcon = {
@@ -209,30 +275,46 @@ fun Navbar(navController: NavController, jwtToken: String? = null) {
             confirmButton = {
                 Button(
                     onClick = {
-                        if(jwtToken!=null){
-                            RetrofitClient.apiService.desactiveUser("Bearer "+jwtToken).enqueue(object: retrofit2.Callback<User> {
-                                override fun onResponse(call: Call<User>, response: Response<User>) {
+                        if (jwtToken != null) {
+                            RetrofitClient.apiService.desactiveUser("Bearer " + jwtToken)
+                                .enqueue(object : retrofit2.Callback<User> {
+                                    override fun onResponse(
+                                        call: Call<User>,
+                                        response: Response<User>
+                                    ) {
 
-                                    if(response.isSuccessful){
-                                        Toast.makeText(context, "Cuenta eliminada", Toast.LENGTH_LONG).show()
+                                        if (response.isSuccessful) {
+                                            Toast.makeText(
+                                                context,
+                                                "Cuenta eliminada",
+                                                Toast.LENGTH_LONG
+                                            ).show()
 
-                                        navController.navigate("inicio")
-                                        isLogoutDialogOpen2 = false
-                                    }else{
-                                        Toast.makeText(context, "No se logró hacer el proceso", Toast.LENGTH_LONG).show()
+                                            navController.navigate("inicio")
+                                            isLogoutDialogOpen2 = false
+                                        } else {
+                                            Toast.makeText(
+                                                context,
+                                                "No se logró hacer el proceso",
+                                                Toast.LENGTH_LONG
+                                            ).show()
 
+                                        }
                                     }
-                                }
 
-                                override fun onFailure(call: Call<User>, t: Throwable) {
-                                    // Aquí manejas el caso de fallo en la llamada, como una excepción o problema de conexión
-                                    Toast.makeText(context, "Error de conexión: ${t.message}", Toast.LENGTH_LONG).show()
-                                }
+                                    override fun onFailure(call: Call<User>, t: Throwable) {
+                                        // Aquí manejas el caso de fallo en la llamada, como una excepción o problema de conexión
+                                        Toast.makeText(
+                                            context,
+                                            "Error de conexión: ${t.message}",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    }
                                 })
                         }
 
 
-                              },
+                    },
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
                 ) {
                     Text("Confirmar")
