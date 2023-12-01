@@ -21,7 +21,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.sp
 import com.example.pizzapp.models.TokenResponse
 import retrofit2.Call
 import retrofit2.Response
@@ -338,6 +340,7 @@ fun YouHaveAccount(navController: NavController){
         horizontalArrangement = Arrangement.Center) {
         Text(
             text = "¿Ya tienes una cuenta?",
+            style = TextStyle(fontSize = 13.sp),
             color = Color.Black,
             modifier = Modifier
                 .padding(5.dp)
@@ -346,6 +349,7 @@ fun YouHaveAccount(navController: NavController){
         Text(
             text = "Iniciar sesión",
             color = Color.Blue,
+            style = TextStyle(fontSize = 13.sp),
             modifier = Modifier
                 .padding(5.dp)
                 .clickable {

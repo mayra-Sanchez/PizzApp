@@ -136,7 +136,7 @@ fun MyProfileScreen(navController: NavController, jwtToken: String, userUpdateJs
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
-                Navbar(navController)
+                Navbar(navController, jwtToken )
                 Text(
                     text = "Mi perfil",
                     fontSize = 24.sp,

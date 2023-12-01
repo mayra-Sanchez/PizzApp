@@ -241,7 +241,7 @@ fun Navbar(navController: NavController, jwtToken: String? = null) {
         AlertDialog(
             onDismissRequest = { isLogoutDialogOpen = false },
             title = { Text("Cerrar sesión") },
-            text = { Text("¿Estás seguro que desea cerrar sesión?") },
+            text = { Text("¿Está seguro que desea cerrar sesión?") },
             confirmButton = {
                 Button(
                     onClick = {
@@ -271,7 +271,7 @@ fun Navbar(navController: NavController, jwtToken: String? = null) {
         AlertDialog(
             onDismissRequest = { isLogoutDialogOpen2 = false },
             title = { Text("Eliminar cuenta") },
-            text = { Text("¿Estás seguro que desea eliminar su cuenta?") },
+            text = { Text("¿Está seguro que desea eliminar su cuenta?") },
             confirmButton = {
                 Button(
                     onClick = {
