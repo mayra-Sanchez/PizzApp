@@ -155,7 +155,7 @@ fun RegisterScreen(navController: NavController) {
                                     "\n" +
                                     "Al utilizar PizzApp, aceptas estos términos y condiciones. Si no estás de acuerdo con alguno de estos términos, por favor, no utilices esta aplicación.\n" +
                                     "\n" +
-                                    "Para preguntas o comentarios sobre estos términos y condiciones, contáctanos en PizzApp1226@gmail.com.\n" +
+                                    "Para preguntas o comentarios sobre estos términos y condiciones, contáctanos en pizzaappnoreply@gmail.com.\n" +
                                     "\n" +
                                     "¡Gracias por utilizar PizzApp!")
                         }
@@ -324,7 +324,7 @@ fun TermsAndConditionsDialog(
                     Text(text = "Aceptar")
                 }
             },
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp).background(Color(255))
         )
     }
 }
@@ -399,13 +399,11 @@ fun ButtonRegister(
                 } else {
                     Toast.makeText(context, "Revisa los campos", Toast.LENGTH_LONG).show()
                 }
-            }
+            },
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
         ) {
             Text(text = "Registrarse")
         }
     }
-}
-fun Register(context: Context){
-    Toast.makeText(context, "Aca se hace la funcionalidad", Toast.LENGTH_LONG).show()
 }
 
