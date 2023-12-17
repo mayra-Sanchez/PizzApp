@@ -33,7 +33,7 @@ data class Review(
     val pizzaType: String
 )
 @Composable
-fun MyReview(navController: NavController) {
+fun MyReview(navController: NavController, jwtToken: String? = null) {
     val reviews = getReviewsForUser()
 
     Column(
@@ -43,7 +43,7 @@ fun MyReview(navController: NavController) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f) // Esto asigna un peso de 1 a la Box
+                .weight(1f)
                 .background(Color(255, 204, 51, 255))
         ) {
 
@@ -51,7 +51,7 @@ fun MyReview(navController: NavController) {
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            Navbar(navController)
+            Navbar(navController, jwtToken)
             Text(
                 text = "Mis reseñas",
                 fontSize = 24.sp,
@@ -117,7 +117,6 @@ fun ReviewItem(review: Review) {
 }
 
 fun getReviewsForUser(): List<Review> {
-    // Simulación de reseñas del usuario
     return listOf(
         Review("Buena comida, buen servicio.","Pizzería Uno", "123 Main St", 4, "Pepperoni"),
         Review("Excelente pizza, me encanta.","Pizza Hut", "456 Elm St", 5, "Margherita"),

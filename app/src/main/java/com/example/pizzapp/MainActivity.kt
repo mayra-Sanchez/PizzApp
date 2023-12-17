@@ -108,8 +108,13 @@ class MainActivity : ComponentActivity() {
                                 userUpdateJson = backStackEntry.arguments?.getString("userUpdateJson") ?: ""
                             )
                         }
-                        composable("mis_reseñas") {
-                            MyReview(navController = navController)
+                        composable("mis_reseñas/{jwtToken}",
+                            arguments = listOf(navArgument("jwtToken") { type = NavType.StringType })
+                        ) { backStackEntry ->
+                            MyReview(
+                                navController = navController,
+                                jwtToken = backStackEntry.arguments?.getString("jwtToken") ?: ""
+                            )
                         }
                         composable("mis_reseñas_lugares") {
                             MyReviewPlaceScreen(navController = navController, pizzeria = pizzeria)
@@ -122,7 +127,6 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("info-restaurant"){
                             InfoRestaurant(navController = navController)
-                            
                         }
                         composable("reviews"){
                             Reviews(navController =  navController)

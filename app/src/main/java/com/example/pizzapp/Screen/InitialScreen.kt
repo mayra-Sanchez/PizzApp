@@ -51,7 +51,7 @@ fun InitialScreen(navController: NavController,jwtToken:String) {
                 .fillMaxWidth()){
             Navbar(navController,jwtToken )
             search(restaurant = " ", restaurantChange = restaurantChange2)
-            Text(text = "RESTAURANTES",
+            Text(text = "Reseñas",
                 style = TextStyle(fontWeight = FontWeight.Bold), fontSize = 20.sp,
                 color = Color.White,
                 modifier = Modifier
@@ -123,9 +123,7 @@ fun restaurants(navController: NavController) {
                 color = Color(116, 27, 15),
                 style = TextStyle(fontWeight = (FontWeight.Bold)),
                 fontSize = 25.sp,
-                modifier = Modifier.padding(16.dp).clickable {
-                    navController.navigate("info-restaurant")
-                }
+                modifier = Modifier.padding(16.dp)
             )
             Box(modifier = Modifier.fillMaxWidth().padding(10.dp)) {
                 Row {

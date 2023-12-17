@@ -89,7 +89,7 @@ fun Navbar(navController: NavController, jwtToken: String? = null) {
                         .weight(1f)
                 ) {
                     // Assuming ImageInitial is a custom composable
-                    ImageInitial(navController)
+                    ImageInitial(navController, jwtToken)
                 }
 
                 Spacer(modifier = Modifier.weight(1.5f))
@@ -204,7 +204,7 @@ fun Navbar(navController: NavController, jwtToken: String? = null) {
                                     tint = Color.Black
                                 )
                             },
-                            onClick = { navController.navigate("mis_reseñas") })
+                            onClick = { navController.navigate("mis_reseñas/$jwtToken") })
                         DropdownMenuItem(
                             text = { Text(text = "Cerrar sesión") },
                             leadingIcon = {
@@ -337,14 +337,14 @@ fun Navbar(navController: NavController, jwtToken: String? = null) {
 }
 
 @Composable
-fun ImageInitial(navController: NavController) {
+fun ImageInitial(navController: NavController,jwtToken: String? = null) {
     Row(
         horizontalArrangement = Arrangement.Start
     ) {
         Image(
             modifier = Modifier
                 .size(400.dp)
-                .clickable { navController.navigate("pagina_principal") },
+                .clickable { navController.navigate("pagina_principal/$jwtToken") },
             painter = painterResource(id = R.drawable.image_principal),
             contentDescription = null,
         )
