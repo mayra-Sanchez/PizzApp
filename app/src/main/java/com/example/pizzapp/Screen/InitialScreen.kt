@@ -45,21 +45,26 @@ import com.example.pizzapp.R
 import com.example.pizzapp.navbar.Navbar
 
 data class Reviews(
-    val username: String,
-    val placeName: String,
-    val review: String,
-    val pizzaType: String,
-    val starRating: Int,
+    var dateCreation: String? = null,
+    var author: String? = null,
+    var descripcion: String? = null,
+    var calificacion: Int? = null,
+    var email: String? = null,
+    var restaurante: String? = null
 )
 
 @Composable
 fun InitialScreen(navController: NavController,jwtToken:String) {
     var searchTerm by remember { mutableStateOf("") }
-    val reviews = getReviewsFromUser()
+//    val reviews = getReviewsFromUser()
 
     var restaurantChange2: (String) -> Unit = { newValue ->
         println("Nuevo valor: $newValue")
     }
+
+    var reviews by remember { mutableStateOf<List<Reviews>>(listOf()) }
+    var isLoading by remember { mutableStateOf(true) }
+    var errorMessage by remember { mutableStateOf("") }
 
     Box(modifier = Modifier
         .fillMaxSize()
@@ -87,9 +92,10 @@ fun InitialScreen(navController: NavController,jwtToken:String) {
                 )
 
             }
+
             val filteredReviews = reviews.filter {
-                it.placeName.contains(searchTerm, ignoreCase = true) ||
-                it.username.contains(searchTerm, ignoreCase = true)
+                (it.restaurante?.contains(searchTerm, ignoreCase = true) ?: false) ||
+                (it.author?.contains(searchTerm, ignoreCase = true) ?: false)
             }
             LazyColumn(
                 modifier = Modifier
@@ -101,6 +107,12 @@ fun InitialScreen(navController: NavController,jwtToken:String) {
             }
         }
     }
+}
+
+
+suspend fun getReviewsFromBackend(token: String): List<Reviews> {
+    // Implementa la lógica para obtener las reseñas desde tu backend aquí
+    return listOf() // Devuelve las reseñas
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -164,10 +176,10 @@ fun reviewsUsers(reviews: Reviews){
             Column(modifier = Modifier.weight(1f)) {
                 Column(modifier = Modifier.padding(8.dp)){
                     Text(text = "Usuario: ", fontWeight = FontWeight.Bold, color = Color.Black, )
-                    Text(text = "${reviews.username}", color = Color.Black)
+                    Text(text = "${reviews.author}", color = Color.Black)
                 }
                 Text(
-                    text = "\"${reviews.review}\"",
+                    text = "\"${reviews.descripcion}\"",
 //                    fontWeight = FontWeight.Bold,
                     color = Color.Black
                 )
@@ -177,18 +189,18 @@ fun reviewsUsers(reviews: Reviews){
 
             Column(modifier = Modifier.weight(1f)) {
 
-                Column(modifier = Modifier.padding(4.dp)){
-                    Text(text = "Tipo de pizza: ", fontWeight = FontWeight.Bold, color = Color.Black, )
-                    Text(text = "${reviews.pizzaType}", color = Color.Black)
-                }
+//                Column(modifier = Modifier.padding(4.dp)){
+//                    Text(text = "Tipo de pizza: ", fontWeight = FontWeight.Bold, color = Color.Black, )
+//                    Text(text = "${reviews.pizzaType}", color = Color.Black)
+//                }
 
                 Column(modifier = Modifier.padding(4.dp)){
                     Text(text = "Lugar: ", fontWeight = FontWeight.Bold, color = Color.Black, )
-                    Text(text = "${reviews.placeName}", color = Color.Black)
+                    Text(text = "${reviews.restaurante}", color = Color.Black)
                 }
                 Column(modifier = Modifier.padding(4.dp)){
                     Text(text = "Cantidad de estrellas: ", fontWeight = FontWeight.Bold, color = Color.Black, )
-                    Text(text = "${reviews.starRating}", color = Color.Black)
+                    Text(text = "${reviews.calificacion}", color = Color.Black)
                 }
             }
         }
@@ -197,11 +209,11 @@ fun reviewsUsers(reviews: Reviews){
 
 fun getReviewsFromUser(): List<Reviews> {
     return listOf(
-        Reviews("Gomez12","Karen´s pizza", "Me gustó mucho, muy rica la comida y la pizza estaba muy rica","Pizza de peperoni", 5),
-        Reviews("Gomez1226","Dominos", "Me gustó mucho, muy rica la comida y la pizza estaba muy rica","Pizza de peperoni", 5),
-        Reviews("Lali","Papa jhons", "Me gustó mucho, muy rica la comida y la pizza estaba muy rica","Pizza de peperoni", 5),
-        Reviews("Juan12","Pizza anita", "Me gustó mucho, muy rica la comida y la pizza estaba muy rica","Pizza de peperoni", 5),
-        Reviews("Marce1","Karen´s pizza", "Me gustó mucho, muy rica la comida y la pizza estaba muy rica","Pizza de peperoni", 5),
+        Reviews("Gomez12","Karen´s pizza", "Me gustó mucho, muy rica la comida y la pizza estaba muy rica", 5),
+        Reviews("Gomez1226","Dominos", "Me gustó mucho, muy rica la comida y la pizza estaba muy rica",5),
+        Reviews("Lali","Papa jhons", "Me gustó mucho, muy rica la comida y la pizza estaba muy rica", 5),
+        Reviews("Juan12","Pizza anita", "Me gustó mucho, muy rica la comida y la pizza estaba muy rica", 5),
+        Reviews("Marce1","Karen´s pizza", "Me gustó mucho, muy rica la comida y la pizza estaba muy rica",5),
     )
 }
 

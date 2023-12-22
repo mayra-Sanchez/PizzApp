@@ -52,6 +52,7 @@ import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import org.threeten.bp.Instant
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -215,7 +216,8 @@ fun addReview(context: Context, textReview: String, restaurantsName:String, date
     ) {
         Button(
             onClick = {
-                val newReview = Review(dateReview, userName, textReview, calification, email, restaurantsName)
+                val dateTime = Instant.parse(dateReview)
+                val newReview = Review(dateTime, userName, textReview, calification, email, restaurantsName)
                 RetrofitClient.apiService.crearReseña("Bearer "+jwtToken, newReview).enqueue(object: retrofit2.Callback<TokenResponse> {
                     override fun onResponse(call: Call<TokenResponse>, response: Response<TokenResponse>) {
                         if (response.isSuccessful) {

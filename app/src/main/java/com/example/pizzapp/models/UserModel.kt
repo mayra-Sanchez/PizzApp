@@ -1,5 +1,7 @@
 package com.example.pizzapp.models
 
+import org.threeten.bp.Instant
+
 data class User(
     var nombre: String? = null,
     var apellido: String? = null,
@@ -19,7 +21,7 @@ data class CredentialsLogin(
 )
 
 data class Review(
-    var dateCreation: String? = null,
+    var dateCreation: Instant? = null,
     var author: String? = null,
     var descripcion: String? = null,
     var calificacion: Int? = null,
