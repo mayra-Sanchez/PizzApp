@@ -17,6 +17,15 @@ data class CredentialsLogin(
     val email: String,
     val password: String
 )
+
+data class Review(
+    var dateCreation: String? = null,
+    var author: String? = null,
+    var descripcion: String? = null,
+    var calificacion: Int? = null,
+    var email: String? = null,
+    var restaurante: String? = null
+)
 data class TokenResponse(
     val token: String
 )

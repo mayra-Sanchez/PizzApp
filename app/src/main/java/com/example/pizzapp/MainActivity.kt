@@ -116,15 +116,29 @@ class MainActivity : ComponentActivity() {
                                 jwtToken = backStackEntry.arguments?.getString("jwtToken") ?: ""
                             )
                         }
+                        composable("crear_reseñas_lugar/{jwtToken}",
+                            arguments = listOf(navArgument("jwtToken") { type = NavType.StringType })
+                        ) { backStackEntry ->
+                            AddReviewPlace(
+                                navController = navController,
+                                pizzeria = pizzeria,
+                                jwtToken = backStackEntry.arguments?.getString("jwtToken") ?: ""
+                            )
+                        }
+                        composable("crear_reseñas_pizza/{jwtToken}",
+                            arguments = listOf(navArgument("jwtToken") { type = NavType.StringType })
+                        ) { backStackEntry ->
+                            AddReviewFood(
+                                navController = navController,
+                                pizzeria = pizzeria,
+                                jwtToken = backStackEntry.arguments?.getString("jwtToken") ?: ""
+                            )
+                        }
+
                         composable("mis_reseñas_lugares") {
                             MyReviewPlaceScreen(navController = navController, pizzeria = pizzeria)
                         }
-                        composable("crear_reseñas_lugar") {
-                            AddReviewPlace(navController = navController, pizzeria = pizzeria)
-                        }
-                        composable("crear_reseñas_pizza") {
-                            AddReviewFood(navController = navController, pizzeria = pizzeria)
-                        }
+
                         composable("info-restaurant"){
                             InfoRestaurant(navController = navController)
                         }

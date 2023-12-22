@@ -35,7 +35,7 @@ import com.example.pizzapp.models.Pizzerias
 import com.example.pizzapp.navbar.Navbar
 
 @Composable
-fun AddReviewPlace(navController: NavController, pizzeria: Pizzerias) {
+fun AddReviewPlace(navController: NavController, pizzeria: Pizzerias, jwtToken:String) {
     var reviewText by remember { mutableStateOf("") }
     var rating by remember { mutableIntStateOf(0) }
 
@@ -54,7 +54,7 @@ fun AddReviewPlace(navController: NavController, pizzeria: Pizzerias) {
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
-                Navbar(navController)
+                Navbar(navController, jwtToken)
                 pizzeria.name?.let {
                     Text(
                         text = it,

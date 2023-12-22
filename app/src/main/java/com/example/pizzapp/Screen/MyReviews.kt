@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -33,7 +34,7 @@ data class Review(
     val pizzaType: String
 )
 @Composable
-fun MyReview(navController: NavController, jwtToken: String? = null) {
+fun MyReview(navController: NavController, jwtToken:String) {
     val reviews = getReviewsForUser()
 
     Column(
@@ -86,8 +87,7 @@ fun MyReview(navController: NavController, jwtToken: String? = null) {
 fun ReviewItem(review: Review) {
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
+            .padding(16.dp).shadow(20.dp, shape = RoundedCornerShape(8.dp))
             .background(Color.White),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(Color.White)
@@ -97,20 +97,29 @@ fun ReviewItem(review: Review) {
                 .padding(16.dp)
         ) {
             Column(modifier = Modifier.weight(1f)) {
+//
+                Text(text = "Lugar: ", fontWeight = FontWeight.Bold, color = Color.Black, )
+                Text(text = "${review.placeName}", color = Color.Black, modifier = Modifier.padding(4.dp))
+
                 Text(
                     text = "\"${review.reviewRestaurant}\"",
                     fontWeight = FontWeight.Bold,
                     color = Color.Black // Set text color to black
                 )
-                Text(text = "Tipo de pizza: ${review.pizzaType}", color = Color.Black)
             }
 
             Spacer(modifier = Modifier.width(16.dp)) // Add spacing between columns
 
             Column(modifier = Modifier.weight(1f)) {
-                Text(text = "Lugar: ${review.placeName}", color = Color.Black)
-                Text(text = "Dirección: ${review.placeAddress}", color = Color.Black)
-                Text(text = "Cantidad de estrellas: ${review.starRating}", color = Color.Black)
+
+                Column(modifier = Modifier.padding(4.dp)){
+                    Text(text = "Tipo de pizza: ", fontWeight = FontWeight.Bold, color = Color.Black, )
+                    Text(text = "${review.pizzaType}", color = Color.Black)
+                }
+                Column(modifier = Modifier.padding(4.dp)){
+                    Text(text = "Cantidad de estrellas: ", fontWeight = FontWeight.Bold, color = Color.Black, )
+                    Text(text = "${review.starRating}", color = Color.Black)
+                }
             }
         }
     }

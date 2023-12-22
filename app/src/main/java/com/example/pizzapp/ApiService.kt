@@ -3,6 +3,7 @@ package com.example.pizzapp
 import com.example.pizzapp.models.CredentialsLogin
 import com.example.pizzapp.models.TokenResponse
 import com.example.pizzapp.models.User
+import com.example.pizzapp.models.Review
 import com.example.pizzapp.models.UserUpdate
 import com.example.pizzapp.models.chagenPassword
 import com.example.pizzapp.models.resetPassword
@@ -28,6 +29,9 @@ import java.security.cert.X509Certificate
 interface ApiService {
     @POST("User/createUser")
     fun crearUsuario(@Body usuario: User): Call<TokenResponse>
+
+    @POST("Review/CreateReview")
+    fun crearReseña(@Header("Authorization") token: String, @Body review: Review): Call<TokenResponse>
 
     @POST("User/loginUser")
     fun login(@Body credenciales: CredentialsLogin): Call<TokenResponse>

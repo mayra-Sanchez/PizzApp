@@ -40,6 +40,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -172,21 +173,19 @@ fun MyProfileScreen(navController: NavController, jwtToken: String, userUpdateJs
                                         onCameraSelected = { isCameraOpen = true },
                                         imageByte = photoBytes
                                         )
-
-
                                 }
-                                Spacer(modifier = Modifier.height(16.dp))
+                                Spacer(modifier = Modifier.height(10.dp))
 
                                 ActualizarTexto(nombre, onValueChange = { nombre = it }, "Nombre")
-                                Spacer(modifier = Modifier.height(16.dp))
+                                Spacer(modifier = Modifier.height(10.dp))
 
                                 ActualizarTexto(apellido, onValueChange = { apellido = it }, "Apellido")
-                                Spacer(modifier = Modifier.height(16.dp))
+                                Spacer(modifier = Modifier.height(10.dp))
 
                                 ActualizarTexto(
                                     nombreUsuario,
                                     onValueChange = { nombreUsuario = it }, "Nombre de usuario")
-                                Spacer(modifier = Modifier.height(16.dp))
+                                Spacer(modifier = Modifier.height(10.dp))
 
                                 ActualizarTexto(email, onValueChange = { email = it }, "Email")
 
@@ -449,7 +448,7 @@ fun ButtonUpdate(
     Row(
         Modifier
             .fillMaxWidth()
-            .padding(10.dp),
+            .padding(5.dp),
         horizontalArrangement = Arrangement.Center
     ) {
         Button(
@@ -504,7 +503,7 @@ fun ActualizarTexto(
     onValueChange: (String) -> Unit,
     label: String
 ) {
-    OutlinedTextField(
+    TextField(
         value = value,
         onValueChange = onValueChange,
         shape = RoundedCornerShape(10.dp),
